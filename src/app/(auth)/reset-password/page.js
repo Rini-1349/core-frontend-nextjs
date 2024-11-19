@@ -10,9 +10,11 @@ import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { useForm } from "@/hooks/useForm";
+import { Loader } from "@/components/Loader/Loader";
 
 export default function ResetPassword() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false); // État pour le loader
   const [isTokenValid, setIsTokenValid] = useState(false);
   const searchParams = useSearchParams();
   const queryParams = searchParams.toString();
@@ -30,6 +32,8 @@ export default function ResetPassword() {
 
   // Vérification du token au chargement
   useEffect(() => {
+    setIsLoading(true); // Activer le loader
+
     const verifyTokenOnLoad = async () => {
       try {
         const response = await resetPassword({ checkOnly: true }, queryParams);
@@ -39,6 +43,8 @@ export default function ResetPassword() {
       } catch (error) {
         console.log(error.message);
         setGlobalMessage({ type: "error", text: error.message });
+      } finally {
+        setIsLoading(false); // Désactiver le loader
       }
     };
 
@@ -52,6 +58,8 @@ export default function ResetPassword() {
 
     if (!validateForm()) return;
 
+    setIsLoading(true); // Activer le loader
+
     try {
       const response = await resetPassword({ password: formData.password }, queryParams);
       if (response) {
@@ -62,6 +70,8 @@ export default function ResetPassword() {
     } catch (error) {
       console.error(error.message);
       setGlobalMessage({ type: "error", text: error.message });
+    } finally {
+      setIsLoading(false); // Désactiver le loader
     }
   };
 
@@ -71,34 +81,37 @@ export default function ResetPassword() {
   ];
 
   return (
-    <div>
-      <AuthHeading1 title="Réinitialisation mot de passe" />
+    <>
+      <Loader visible={isLoading} /> {/* Affichage du loader */}
+      <div>
+        <AuthHeading1 title="Réinitialisation mot de passe" />
 
-      {isTokenValid ? (
-        <form onSubmit={handlePasswordReset}>
-          <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
-            {formFields.map((field) => (
-              <Input key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
-            ))}
+        {isTokenValid ? (
+          <form onSubmit={handlePasswordReset}>
+            <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
+              {formFields.map((field) => (
+                <Input key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
+              ))}
 
-            {/* Messages globaux */}
+              {/* Messages globaux */}
+              <GlobalMessage message={globalMessage} />
+
+              <DefaultButton type="submit" title="Réinitialiser le mot de passe" />
+            </div>
+          </form>
+        ) : (
+          <div className="text-sm text-gray-500 mt-3">
             <GlobalMessage message={globalMessage} />
-
-            <DefaultButton type="submit" title="Réinitialiser le mot de passe" />
+            {globalMessage && globalMessage.type === "error" ? (
+              <Link href="/forgot-password" className="text-blue-600 hover:underline">
+                Générer un nouveau lien
+              </Link>
+            ) : (
+              ""
+            )}
           </div>
-        </form>
-      ) : (
-        <div className="text-sm text-gray-500 mt-3">
-          <GlobalMessage message={globalMessage} />
-          {globalMessage && globalMessage.type === "error" ? (
-            <Link href="/forgot-password" className="text-blue-600 hover:underline">
-              Générer un nouveau lien
-            </Link>
-          ) : (
-            ""
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
