@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { register } from "@/services/auth";
 import { Input } from "@/components/Form/Input/Input";
@@ -9,11 +8,12 @@ import { DefaultButton } from "@/components/Button/DefaultButton";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { useForm } from "@/hooks/useForm";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
-import { Loader } from "@/components/Loader/Loader";
+import { getFrenchSlug } from "@/lib/slugUtils";
+import { useIsLoading } from "@/context/LoadingContext";
 
 export default function Register() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const { setIsLoading } = useIsLoading();
 
   // Configuration du formulaire
   const initialFormState = { lastname: "", firstname: "", username: "", password: "", confirmPassword: "" };
@@ -58,7 +58,6 @@ export default function Register() {
 
   return (
     <>
-      <Loader visible={isLoading} /> {/* Affichage du loader */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         <AuthHeading1 title="Créer un compte" />
         <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
@@ -72,7 +71,7 @@ export default function Register() {
           <DefaultButton type="submit" title="Créer un compte" className="mx-auto px-6" />
 
           <p className="text-sm text-gray-500 mt-3">
-            <Link href="/login" className="text-blue-700 hover:underline dark:text-blue-500">
+            <Link href={`/${getFrenchSlug("login")}`} className="text-blue-700 hover:underline dark:text-blue-500">
               Retour à la page de connexion
             </Link>
           </p>

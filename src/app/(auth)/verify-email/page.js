@@ -8,11 +8,12 @@ import { clearSession } from "@/utils/session"; // Vous devrez peut-être ajoute
 import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
-import { Loader } from "@/components/Loader/Loader";
+import { getFrenchSlug } from "@/lib/slugUtils";
+import { useIsLoading } from "@/context/LoadingContext";
 
 export default function VerifyEmail() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const { setIsLoading } = useIsLoading();
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showResendLinkOption, setShowResendLinkOption] = useState(false);
   const searchParams = useSearchParams();
@@ -44,14 +45,13 @@ export default function VerifyEmail() {
 
   return (
     <>
-      <Loader visible={isLoading} /> {/* Affichage du loader */}
       <div>
         <AuthHeading1 title="Vérification adresse email" className="mb-8" />
         <GlobalMessage message={globalMessage} />
 
         {isEmailVerified && (
           <p className="text-sm text-gray-500 mt-3">
-            <Link href="/login" className="text-blue-600 hover:underline">
+            <Link href={`/${getFrenchSlug("login")}`} className="text-blue-600 hover:underline">
               Accéder à la page de connexion
             </Link>
           </p>

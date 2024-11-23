@@ -2,21 +2,22 @@
 
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
-import { Loader } from "@/components/Loader/Loader";
 import { resendValidationEmail } from "@/services/auth";
-import { getCookieClientSide, getSession, clearSession } from "@/utils/session";
+import { getTokenClientSide, getSession, clearSession } from "@/utils/session";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getFrenchSlug } from "@/lib/slugUtils";
+import { useIsLoading } from "@/context/LoadingContext";
 
 export default function ResendValidationEmail(request) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const { setIsLoading } = useIsLoading();
   const [user, setUser] = useState(null);
   const [globalMessage, setGlobalMessage] = useState(null);
 
   useEffect(() => {
-    const session = getSession(getCookieClientSide());
+    const session = getSession(getTokenClientSide());
     if (session) {
       setUser(session);
     } else {
@@ -48,12 +49,11 @@ export default function ResendValidationEmail(request) {
   const handleLogout = () => {
     clearSession(); // Efface le cookie de session
     setUser(null); // Réinitialise l'état de l'utilisateur
-    router.push("/login");
+    router.push(getFrenchSlug("login"));
   };
 
   return (
     <>
-      <Loader visible={isLoading} /> {/* Affichage du loader */}
       <div>
         <AuthHeading1 title="Adresse email non vérifiée" className="mb-8" />
         <GlobalMessage message={globalMessage} />

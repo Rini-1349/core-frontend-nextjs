@@ -7,11 +7,12 @@ import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { useForm } from "@/hooks/useForm";
-import { useState } from "react";
-import { Loader } from "@/components/Loader/Loader";
+import { getFrenchSlug } from "@/lib/slugUtils";
+import { useIsLoading } from "@/context/LoadingContext";
 
 export default function ForgotPassword() {
-  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const { setIsLoading } = useIsLoading();
+
   // Configuration du formulaire
   const initialFormState = { username: "" };
   const validate = (data) => {
@@ -48,7 +49,6 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <Loader visible={isLoading} /> {/* Affichage du loader */}
       <form className="space-y-6" onSubmit={handleForgotPassword}>
         <AuthHeading1 title="Mot de passe oublié" />
         <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
@@ -61,7 +61,7 @@ export default function ForgotPassword() {
 
           <DefaultButton type="submit" title="Envoyer" className="" />
           <p className="text-sm text-gray-500 mt-3">
-            <Link href="/login" className="text-blue-700 hover:underline dark:text-blue-500">
+            <Link href={`/${getFrenchSlug("login")}`} className="text-blue-700 hover:underline dark:text-blue-500">
               Retour à la page de connexion
             </Link>
           </p>

@@ -10,11 +10,12 @@ import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { useForm } from "@/hooks/useForm";
-import { Loader } from "@/components/Loader/Loader";
+import { getFrenchSlug } from "@/lib/slugUtils";
+import { useIsLoading } from "@/context/LoadingContext";
 
 export default function ResetPassword() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const { setIsLoading } = useIsLoading();
   const [isTokenValid, setIsTokenValid] = useState(false);
   const searchParams = useSearchParams();
   const queryParams = searchParams.toString();
@@ -82,7 +83,6 @@ export default function ResetPassword() {
 
   return (
     <>
-      <Loader visible={isLoading} /> {/* Affichage du loader */}
       <div>
         <AuthHeading1 title="Réinitialisation mot de passe" />
 
@@ -103,7 +103,7 @@ export default function ResetPassword() {
           <div className="text-sm text-gray-500 mt-3">
             <GlobalMessage message={globalMessage} />
             {globalMessage && globalMessage.type === "error" ? (
-              <Link href="/forgot-password" className="text-blue-600 hover:underline">
+              <Link href={`/${getFrenchSlug("forgot-password")}`} className="text-blue-600 hover:underline">
                 Générer un nouveau lien
               </Link>
             ) : (
