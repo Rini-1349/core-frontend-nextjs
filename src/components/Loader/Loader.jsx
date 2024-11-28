@@ -1,3 +1,8 @@
+/**
+ * Loader component
+ *
+ * @returns {JSX.Element}
+ */
 const Loader = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/25 dark:bg-white/25">

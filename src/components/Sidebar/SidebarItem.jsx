@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import SidebarDropdown from "@/components/Sidebar/SidebarDropdown";
 
+/**
+ * SidebarItem component
+ *
+ * @param {{ item: {}; pageName: string; setPageName: function; }} param0
+ * @param {{}} param0.item
+ * @param {string} param0.pageName
+ * @param {function} param0.setPageName
+ * @returns {JSX.Element}
+ */
 const SidebarItem = ({ item, pageName, setPageName }) => {
   const [isClient, setIsClient] = useState(false);
   const [pathname, setPathname] = useState("");

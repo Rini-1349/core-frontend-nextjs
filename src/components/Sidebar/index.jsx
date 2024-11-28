@@ -7,6 +7,11 @@ import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
+/**
+ * menuGroups array
+ *
+ * @type {Array}
+ */
 const menuGroups = [
   {
     menuItems: [
@@ -28,6 +33,14 @@ const menuGroups = [
   },
 ];
 
+/**
+ * Sidebar component
+ *
+ * @param {{ sidebarOpen: boolean; setSidebarOpen: function; }} param0
+ * @param {boolean} param0.sidebarOpen
+ * @param {function} param0.setSidebarOpen
+ * @returns {JSX.Element}
+ */
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const pathname = usePathname();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");

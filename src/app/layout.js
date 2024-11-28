@@ -7,6 +7,14 @@ import { useState } from "react";
 import Loader from "@/components/Loader/Loader";
 import { LoadingProvider, useIsLoading } from "@/context/LoadingContext";
 
+/**
+ * RootLayout
+ *
+ * @export
+ * @param {{ children: JSX.Element; }} param0
+ * @param {JSX.Element} param0.children
+ * @returns {JSX.Element}
+ */
 export default function RootLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -21,6 +29,13 @@ export default function RootLayout({ children }) {
   );
 }
 
+/**
+ * LayoutContent
+ *
+ * @param {{ children: JSX.Element; }} param0
+ * @param {JSX.Element} param0.children
+ * @returns {JSX.Element}
+ */
 function LayoutContent({ children }) {
   const { isLoading, setIsLoading } = useIsLoading();
 

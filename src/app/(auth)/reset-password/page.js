@@ -13,6 +13,12 @@ import { useForm } from "@/hooks/useForm";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 
+/**
+ * ResetPassword page
+ *
+ * @export
+ * @returns {JSX.Element}
+ */
 export default function ResetPassword() {
   const router = useRouter();
   const { setIsLoading } = useIsLoading();
@@ -33,9 +39,9 @@ export default function ResetPassword() {
 
   // Vérification du token au chargement
   useEffect(() => {
-    setIsLoading(true); // Activer le loader
-
     const verifyTokenOnLoad = async () => {
+      setIsLoading(true); // Activer le loader
+
       try {
         const response = await resetPassword({ checkOnly: true }, queryParams);
         if (response) {

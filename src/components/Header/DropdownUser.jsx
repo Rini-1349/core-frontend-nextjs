@@ -6,6 +6,11 @@ import { clearSession } from "@/utils/session";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { getSession, getTokenClientSide } from "@/utils/session";
 
+/**
+ * DropdownUser component
+ *
+ * @returns {JSX.Element}
+ */
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();

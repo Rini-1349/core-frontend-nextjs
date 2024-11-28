@@ -1,5 +1,12 @@
 import { useState } from "react";
 
+/**
+ * useForm function
+ *
+ * @param {{}} initialState
+ * @param {function} validate
+ * @returns {{ formData: {}; fieldErrors: {}; globalMessage: {}; setGlobalMessage: function; handleChange: (e: any) => void; validateForm: () => boolean; }\}
+ */
 export const useForm = (initialState, validate) => {
   const [formData, setFormData] = useState(initialState);
   const [fieldErrors, setFieldErrors] = useState({});

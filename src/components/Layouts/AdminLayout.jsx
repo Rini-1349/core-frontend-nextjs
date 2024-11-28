@@ -3,6 +3,14 @@ import React, { useState, ReactNode } from "react";
 import Sidebar from "@/components/Sidebar/index.jsx";
 import Header from "@/components/Header/index.jsx";
 
+/**
+ * AdminLayout component
+ *
+ * @export
+ * @param {{ children: JSX.Element; }} param0
+ * @param {JSX.Element} param0.children
+ * @returns {JSX.Element}
+ */
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

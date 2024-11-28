@@ -10,6 +10,13 @@ import { useEffect, useState } from "react";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 
+/**
+ * ResendValidationEmail page
+ *
+ * @export
+ * @param {Request} request
+ * @returns {JSX.Element}
+ */
 export default function ResendValidationEmail(request) {
   const router = useRouter();
   const { setIsLoading } = useIsLoading();

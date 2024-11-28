@@ -1,6 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 
+/**
+ * useLocalStorage function
+ *
+ * @param {key} key
+ * @param {initialValue} initialValue
+ * @returns {[storedValue, setStoredValue]}
+ */
 function useLocalStorage(key, initialValue) {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once

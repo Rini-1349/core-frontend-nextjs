@@ -11,6 +11,12 @@ import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 
+/**
+ * VerifyEmail page
+ *
+ * @export
+ * @returns {JSX.Element}
+ */
 export default function VerifyEmail() {
   const router = useRouter();
   const { setIsLoading } = useIsLoading();
@@ -21,9 +27,8 @@ export default function VerifyEmail() {
   const [globalMessage, setGlobalMessage] = useState(null);
 
   useEffect(() => {
-    setIsLoading(true); // Activer le loader
-
     const verifyEmailToken = async () => {
+      setIsLoading(true); // Activer le loader
       try {
         const response = await verifyEmail(params); // Vérifie le token de vérification d'email
         if (response) {

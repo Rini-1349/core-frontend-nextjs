@@ -1,3 +1,16 @@
+/**
+ * InputWithEmbeddedLabel component
+ *
+ * @param {{ label: string; name: string; value: any; onChange: function; placeholder: string; type?: string; disabled: boolean; }} param0
+ * @param {string} param0.label
+ * @param {string} param0.name
+ * @param {any} param0.value
+ * @param {function} param0.onChange
+ * @param {string} param0.placeholder
+ * @param {string} [param0.type="text"]
+ * @param {boolean} param0.disabled
+ * @returns {JSX.Element}
+ */
 function InputWithEmbeddedLabel({ label, name, value, onChange, placeholder, type = "text", disabled }) {
   return (
     <div className="relative flex flex-col-reverse w-full">

@@ -2,6 +2,13 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+/**
+ * SidebarDropdown component
+ *
+ * @param {{ item: {}; }} param0
+ * @param {{}} param0.item
+ * @returns {JSX.Element}
+ */
 const SidebarDropdown = ({ item }) => {
   const pathname = usePathname();
 

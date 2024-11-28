@@ -3,7 +3,14 @@ import { getSession } from "./utils/session";
 import slugMapping from "./lib/slugMapping";
 import { getFrenchSlug } from "@/lib/slugUtils";
 
-// Middleware asynchrone
+/**
+ * Asynchronious Middleware
+ *
+ * @export
+ * @async
+ * @param {Request} req
+ * @returns {NextResponse}
+ */
 export async function middleware(req) {
   /* Gestion des URLs */
   const url = req.nextUrl.clone();
@@ -49,6 +56,11 @@ export async function middleware(req) {
   return NextResponse.next(); // Poursuit normalement si aucune condition bloquante
 }
 
+/**
+ * config
+ *
+ * @type {{ matcher: {}; \}\}
+ */
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"], // Exclut les ressources statiques et API
 };

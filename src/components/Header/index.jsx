@@ -5,6 +5,12 @@ import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
 
+/**
+ * Header component
+ *
+ * @param {{}} props
+ * @returns {JSX.Element}
+ */
 const Header = (props) => {
   const { sidebarOpen, setSidebarOpen } = props;
 

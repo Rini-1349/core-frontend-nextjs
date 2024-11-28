@@ -10,6 +10,12 @@ import { useForm } from "@/hooks/useForm";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 
+/**
+ * ForgotPassword page
+ *
+ * @export
+ * @returns {JSX.Element}
+ */
 export default function ForgotPassword() {
   const { setIsLoading } = useIsLoading();
 

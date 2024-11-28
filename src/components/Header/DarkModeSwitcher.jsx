@@ -1,5 +1,10 @@
 import useColorMode from "@/hooks/useColorMode.jsx";
 
+/**
+ * DarkModeSwitcher component
+ *
+ * @returns {JSX.Element}
+ */
 const DarkModeSwitcher = () => {
   const [colorMode, setColorMode] = useColorMode();
 

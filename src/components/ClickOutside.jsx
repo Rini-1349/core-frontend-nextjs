@@ -1,5 +1,15 @@
 import React, { useRef, useEffect } from "react";
 
+/**
+ * ClickOutside component
+ *
+ * @param {{ children: JSX.Element; exceptionRef: exceptionRef; onClick: function; className: string; }} param0
+ * @param {JSX.Element} param0.children
+ * @param {exceptionRef} param0.exceptionRef
+ * @param {function} param0.onClick
+ * @param {string} param0.className
+ * @returns {JSX.Element}
+ */
 const ClickOutside = ({ children, exceptionRef, onClick, className }) => {
   const wrapperRef = useRef(null);
 

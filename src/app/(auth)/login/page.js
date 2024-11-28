@@ -12,6 +12,12 @@ import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 
+/**
+ * Login page
+ *
+ * @export
+ * @returns {JSX.Element}
+ */
 export default function Login() {
   const router = useRouter();
   const { setIsLoading } = useIsLoading();

@@ -1,6 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+/**
+ * Input component
+ *
+ * @param {{ label: string; type?: string; name: string; value: any; onChange: function; placeholder?: string; errorMessage?: string; required?: boolean; className?: string; }} param0
+ * @param {string} param0.label
+ * @param {string} [param0.type="text"]
+ * @param {string} param0.name
+ * @param {any} param0.value
+ * @param {function} param0.onChange
+ * @param {string} [param0.placeholder=""]
+ * @param {string} [param0.errorMessage=""]
+ * @param {boolean} [param0.required=false]
+ * @param {string\} [param0.className=""]
+ * @returns
+ */
 export const Input = ({ label, type = "text", name, value, onChange, placeholder = "", errorMessage = "", required = false, className = "" }) => {
   return (
     <div className={`flex flex-col ${className}`}>

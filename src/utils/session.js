@@ -1,15 +1,25 @@
 import { jwtDecode } from "jwt-decode";
 
-// Gère la session : enregistre le token dans les cookies
+/**
+ * setSession function
+ * Gère la session : enregistre le token dans les cookies
+ *
+ * @export
+ * @param {string} token
+ */
 export function setSession(token) {
-  console.log("set : ", token);
   document.cookie = `token=${token}; path=/`;
 }
 
-// Récupère et décode le token JWT côté client
+/**
+ * getSession
+ * Récupère et décode le token JWT côté client
+ *
+ * @export
+ * @param {string} [token=null]
+ * @returns {{}}
+ */
 export function getSession(token = null) {
-  console.log("Token reçu :", token);
-
   // Si aucun token n'est fourni, essaie de le récupérer des cookies
   if (!token) {
     token = getTokenClientSide();
@@ -19,13 +29,23 @@ export function getSession(token = null) {
   return typeof token === "string" && token.length > 0 ? jwtDecode(token) : null;
 }
 
-// Supprime le token des cookies
+/**
+ * clearSession
+ * Supprime le token des cookies
+ *
+ * @export
+ */
 export function clearSession() {
-  console.log("clear : ", document.cookie);
   document.cookie = "token=; Max-Age=0; path=/";
 }
 
-// Récupère le token dans les cookies côté client
+/**
+ * getTokenClientSide
+ * Récupère le token dans les cookies côté client
+ *
+ * @export
+ * @returns {string}
+ */
 export function getTokenClientSide() {
   // Vérifie si l'exécution est côté client
   if (typeof window !== "undefined") {

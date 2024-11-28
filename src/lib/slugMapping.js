@@ -1,3 +1,8 @@
+/**
+ * English vs French slugs
+ *
+ * @type {{}\}
+ */
 const slugMapping = {
   "/": "/", // Page d'accueil
   login: "connexion",

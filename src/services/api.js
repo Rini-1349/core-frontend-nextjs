@@ -1,5 +1,14 @@
 import client from "@/services/client";
+import { Axios } from "axios";
 
+/**
+ * apiFetch function
+ *
+ * @async
+ * @param {string} endpoint
+ * @param {{}} [options={\}]
+ * @returns {Axios}
+ */
 async function apiFetch(endpoint, options = {}) {
   try {
     const response = await client({
