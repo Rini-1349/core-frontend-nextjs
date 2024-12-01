@@ -1,3 +1,4 @@
+import { getFrenchSlug } from "@/lib/slugUtils";
 import { jwtDecode } from "jwt-decode";
 
 /**
@@ -54,4 +55,11 @@ export function getTokenClientSide() {
   }
   console.log("getTokenClientSide appelé côté serveur !");
   return null;
+}
+
+export function redirectToLogin() {
+  clearSession();
+  if (typeof window !== "undefined") {
+    window.location.href = `/${getFrenchSlug("login")}`;
+  }
 }

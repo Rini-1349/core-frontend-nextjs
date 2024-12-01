@@ -1,4 +1,5 @@
 import client from "@/services/client";
+import { redirectToLogin } from "@/utils/session";
 import { Axios } from "axios";
 
 /**
@@ -24,6 +25,10 @@ async function apiFetch(endpoint, options = {}) {
     return response.data; // Axios convertit automatiquement la réponse en JSON
   } catch (error) {
     if (error.response) {
+      if (error.response.status === 401) {
+        console.log("[API] Unauthorized. Redirecting to login.");
+        redirectToLogin();
+      }
       // Si l'erreur provient de la réponse du serveur
       console.log(error.response.data);
       const errorMessage = error.response.data.message || "Une erreur est apparue";

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getSession, clearSession, getTokenClientSide } from "@/utils/session";
+import { getSession, getTokenClientSide } from "@/utils/session";
 
 /**
  * Home page

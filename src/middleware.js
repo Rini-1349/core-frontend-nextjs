@@ -50,6 +50,12 @@ export async function middleware(req) {
     if (!session || !session.is_verified) {
       console.log(`[Middleware] Session unverified, redirecting to validation`);
       return NextResponse.redirect(new URL("/resend-validation-email", req.url));
+    } else {
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (session.exp && session.exp < currentTime) {
+        console.log("[Middleware] Token expired. Redirecting to login.");
+        return NextResponse.redirect(new URL(`/${getFrenchSlug("login")}`, req.url));
+      }
     }
   }
 

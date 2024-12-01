@@ -3,6 +3,7 @@
 import "@/css/globals.css";
 import "@/css/tailadmin.css";
 import "@/css/satoshi.css";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useState } from "react";
 import Loader from "@/components/Loader/Loader";
 import { LoadingProvider, useIsLoading } from "@/context/LoadingContext";

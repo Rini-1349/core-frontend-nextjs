@@ -21,7 +21,7 @@ export const metadata = {
 export default function BackOfficeLayout({ children }) {
   return (
     <>
-      <AdminLayout />
+      <AdminLayout>{children}</AdminLayout>
     </>
   );
 }
