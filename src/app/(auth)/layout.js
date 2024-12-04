@@ -1,12 +1,7 @@
-/**
- * metadata
- *
- * @type {{ title: string; description: string; }\}
- */
-export const metadata = {
-  title: "Authentification",
-  description: "Tout le processus d'authentification et de création de compte",
-};
+"use client";
+
+import LayoutContent from "@/components/Loader/LayoutContent";
+import { LoadingProvider } from "@/context/LoadingContext";
 
 /**
  * AuthLayout
@@ -19,7 +14,11 @@ export const metadata = {
 export default function AuthLayout({ children }) {
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8">{children}</div>
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8">
+        <LoadingProvider>
+          <LayoutContent>{children}</LayoutContent>
+        </LoadingProvider>
+      </div>
     </div>
   );
 }

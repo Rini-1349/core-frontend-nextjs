@@ -1,9 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
-import TableHead from "./TableHead";
-import TableBody from "./TableBody";
+import { debounce } from "@/utils/miscellaneousFunctions";
+import { usePopup } from "@/context/PopupContext";
+import DeletePopup from "../Popup/DeletePopup";
+import TableHead from "./TableHead/TableHead";
+import TableBody from "./TableBody/TableBody";
+import TableTr from "./TableBody/TableBodyTr";
+import TableTd from "./TableBody/TableBodyTd";
+import TableTdContent from "./TableBody/TableBodyTdContent";
+import TableHeadTh from "./TableHead/TableHeadTh";
+import TableHeadThContent from "./TableHead/TableHeadThContent";
 import Pagination from "./Pagination";
 import Filters from "./Filters";
-import { debounce } from "@/utils/miscellaneousFunctions";
 
 // Maximum 5 pagination page buttons
 function setPaginationButtons(pagination) {
@@ -21,11 +28,20 @@ function setPaginationButtons(pagination) {
   return pagination;
 }
 
-const DataTable = ({ columns, fetchData, setIsLoading, isLoading, paginationLimits, defaultFilters }) => {
+const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, paginationLimits, defaultFilters }) => {
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState([]);
   const [filters, setFilters] = useState(defaultFilters);
   const [tempFilters, setTempFilters] = useState(defaultFilters); // État temporaire pour les entrées utilisateur
+  const { openPopup, closePopup } = usePopup();
+  const [addFiltersRow, setAddFiltersRow] = useState(false);
+
+  useEffect(() => {
+    const hasFilters = columns.some((col) => col.search);
+    if (hasFilters !== addFiltersRow) {
+      setAddFiltersRow(hasFilters); // Met à jour l'état si nécessaire
+    }
+  }, [columns, addFiltersRow, setAddFiltersRow]);
 
   // Fonction pour récupérer les données
   const loadData = async () => {
@@ -50,6 +66,28 @@ const DataTable = ({ columns, fetchData, setIsLoading, isLoading, paginationLimi
   useEffect(() => {
     loadData();
   }, [filters]);
+
+  // Ouvre la pop-up de suppression avec l'élément sélectionné
+  const handleDeleteClick = (item, itemDescription) => {
+    openPopup(<DeletePopup item={item} itemDescription={itemDescription} onDeleteConfirm={handleDeleteConfirm} closePopup={closePopup} />);
+  };
+
+  // Fonction pour supprimer un item
+  const handleDeleteConfirm = async (itemId) => {
+    setIsLoading(true);
+    try {
+      const response = await deleteItem(itemId);
+      if (response) {
+        // Mettre à jour localement la liste après suppression
+        setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+        closePopup();
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsLoading(false); // Désactiver le loader
+    }
+  };
 
   // Fonction de gestion de la recherche avec debounce (500ms)
   const debouncedUpdateFilters = useCallback(
@@ -107,8 +145,51 @@ const DataTable = ({ columns, fetchData, setIsLoading, isLoading, paginationLimi
             <div className="align-middle inline-block min-w-full">
               <div className="shadow overflow-hidden">
                 <table className="table-fixed min-w-full divide-y divide-gray-200">
-                  <TableHead columns={columns} filters={tempFilters} onFilterChange={handleFilterChange} handleSort={handleSort} handleClearFilters={handleClearFilters} />
-                  <TableBody items={items} columns={columns} isLoading={isLoading} />
+                  <TableHead>
+                    <tr key="tableLabelsRow">
+                      {columns.map((col) => (
+                        <TableHeadTh key={col.key} onClick={col.sortable ? () => handleSort(col.key) : null}>
+                          <TableHeadThContent thType="label" col={col} filters={tempFilters} />
+                        </TableHeadTh>
+                      ))}
+                    </tr>
+                    {addFiltersRow ? (
+                      <tr key="tableSearchRow">
+                        {columns.map((col) => (
+                          <TableHeadTh key={col.key}>
+                            <TableHeadThContent thType="filter" col={col} filters={tempFilters} onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
+                          </TableHeadTh>
+                        ))}
+                      </tr>
+                    ) : (
+                      ""
+                    )}
+                  </TableHead>
+                  <TableBody>
+                    {isLoading ? (
+                      <TableTr key="loadingDataTr">
+                        <TableTd colSpan={columns.length} key="loadingDataTd">
+                          Chargement...
+                        </TableTd>
+                      </TableTr>
+                    ) : items.length > 0 ? (
+                      items.map((item) => (
+                        <TableTr key={item.id}>
+                          {columns.map((col) => (
+                            <TableTd key={col.key}>
+                              <TableTdContent col={col} item={item} onDeleteClick={handleDeleteClick} />
+                            </TableTd>
+                          ))}
+                        </TableTr>
+                      ))
+                    ) : (
+                      <TableTr key="noResultsTr">
+                        <TableTd colSpan={columns.length} key="noResultsTd">
+                          Aucun résultat trouvé
+                        </TableTd>
+                      </TableTr>
+                    )}
+                  </TableBody>
                 </table>
               </div>
             </div>

@@ -1,7 +1,11 @@
 "use client";
-import React, { useState, ReactNode } from "react";
+
+import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar/index.jsx";
 import Header from "@/components/Header/index.jsx";
+import { PopupProvider } from "@/context/PopupContext";
+import { LoadingProvider } from "@/context/LoadingContext";
+import LayoutContent from "../Loader/LayoutContent";
 
 /**
  * AdminLayout component
@@ -30,7 +34,13 @@ export default function AdminLayout({ children }) {
 
           {/* <!-- ===== Main Content Start ===== --> */}
           <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">{children}</div>
+            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+              <PopupProvider>
+                <LoadingProvider>
+                  <LayoutContent>{children}</LayoutContent>
+                </LoadingProvider>
+              </PopupProvider>
+            </div>
           </main>
           {/* <!-- ===== Main Content End ===== --> */}
         </div>

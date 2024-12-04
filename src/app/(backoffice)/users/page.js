@@ -2,8 +2,8 @@
 
 import DataTable from "@/components/DataTable";
 import { useIsLoading } from "@/context/LoadingContext";
-import { getUsersList } from "@/services/users";
-import { faTrashCan, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { deleteUser, getUsersList } from "@/services/users";
+import { faTrashCan, faPenToSquare, faEye } from "@fortawesome/free-solid-svg-icons";
 
 const columns = [
   { label: "Nom", key: "lastname", sortable: true, search: "input" },
@@ -25,16 +25,47 @@ const columns = [
     search: "clearFilters",
     actions: [
       {
-        label: "Modifier",
-        href: "#",
+        key: "view",
+        label: "Voir",
+        href: "/users/[id]?mode=view",
         bgColor: "cyan",
-        icon: faPenToSquare,
+        icon: faEye,
+        replacePatterns: [
+          {
+            pattern: /\[id\]/,
+            field: "id",
+          },
+        ],
       },
       {
+        key: "edit",
+        label: "Modifier",
+        href: "/users/[id]?mode=edit",
+        bgColor: "indigo",
+        icon: faPenToSquare,
+        replacePatterns: [
+          {
+            pattern: /\[id\]/,
+            field: "id",
+          },
+        ],
+      },
+      {
+        key: "delete",
         label: "Supprimer",
-        href: "#",
         bgColor: "red",
         icon: faTrashCan,
+        itemDescription: 'l\'utilisateur "[firstname] [lastname]"',
+        replacePatterns: [
+          {
+            pattern: /\[firstname\]/,
+            field: "firstname",
+          },
+          {
+            pattern: /\[lastname\]/,
+            field: "lastname",
+          },
+        ],
       },
     ],
   },
@@ -57,7 +88,7 @@ export default function UsersList() {
 
   return (
     <div>
-      <DataTable columns={columns} fetchData={getUsersList} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} />
+      <DataTable columns={columns} fetchData={getUsersList} deleteItem={deleteUser} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} />
     </div>
   );
 }
