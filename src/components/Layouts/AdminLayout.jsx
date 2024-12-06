@@ -6,6 +6,7 @@ import Header from "@/components/Header/index.jsx";
 import { PopupProvider } from "@/context/PopupContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import LayoutContent from "../Loader/LayoutContent";
+import { useSearchParams } from "next/navigation";
 
 /**
  * AdminLayout component
@@ -17,36 +18,22 @@ import LayoutContent from "../Loader/LayoutContent";
  */
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const isModal = searchParams.get("modal") ? true : false;
 
   return (
-    <>
-      {/* <!-- ===== Page Wrapper Start ===== --> */}
-      <div className="flex">
-        {/* <!-- ===== Sidebar Start ===== --> */}
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        {/* <!-- ===== Sidebar End ===== --> */}
-
-        {/* <!-- ===== Content Area Start ===== --> */}
-        <div className="relative flex flex-1 flex-col lg:ml-72.5">
-          {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          {/* <!-- ===== Header End ===== --> */}
-
-          {/* <!-- ===== Main Content Start ===== --> */}
-          <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-              <PopupProvider>
-                <LoadingProvider>
-                  <LayoutContent>{children}</LayoutContent>
-                </LoadingProvider>
-              </PopupProvider>
-            </div>
-          </main>
-          {/* <!-- ===== Main Content End ===== --> */}
+    <div className="page-container">
+      {!isModal && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+      <div className="main-content">
+        {!isModal && <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+        <div className="content-wrapper">
+          <PopupProvider>
+            <LoadingProvider>
+              <LayoutContent>{children}</LayoutContent>
+            </LoadingProvider>
+          </PopupProvider>
         </div>
-        {/* <!-- ===== Content Area End ===== --> */}
       </div>
-      {/* <!-- ===== Page Wrapper End ===== --> */}
-    </>
+    </div>
   );
 }

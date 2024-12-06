@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
  *
  * @returns {JSX.Element}
  */
-const TableBodyTdContent = ({ col, item, onDeleteClick }) => {
+const TableBodyTdContent = ({ col, item, onDeleteClick, onLinkClick }) => {
   let content = "";
 
   if (col.boolean) {
@@ -17,7 +17,6 @@ const TableBodyTdContent = ({ col, item, onDeleteClick }) => {
     }
   } else if (col.actions) {
     content = col.actions.map((action, index) => {
-      let dataModalAttribute = "";
       const colorClassName = action.color ? `text-${action.color}` : "text-white";
       const bgColorClassName = action.bgColor ? `bg-${action.bgColor}-600 hover:bg-${action.bgColor}-700 focus:ring-${action.bgColor}-200` : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-200";
 
@@ -26,14 +25,11 @@ const TableBodyTdContent = ({ col, item, onDeleteClick }) => {
           key={index}
           onClick={() => {
             if (action.key === "delete") {
-              dataModalAttribute = "popup-modal";
               onDeleteClick(item, replaceMultiplePatternsWithItemField(action.itemDescription, action.replacePatterns, item));
             } else if (action.href) {
-              window.location.href = replaceMultiplePatternsWithItemField(action.href, action.replacePatterns, item);
+              onLinkClick(replaceMultiplePatternsWithItemField(action.href, action.replacePatterns, item), action);
             }
           }}
-          data-modal-target={dataModalAttribute}
-          data-modal-toggle={dataModalAttribute}
           className={`font-medium rounded-lg text-sm inline-flex items-center px-3 py-2 text-center ${colorClassName} ${bgColorClassName}`}
         >
           {action.icon && <FontAwesomeIcon icon={action.icon} className="mr-1" />}

@@ -22,7 +22,12 @@ async function apiFetch(endpoint, options = {}) {
       ...options, // Passe les autres options (comme `timeout`, etc.)
     });
 
-    return response.data; // Axios convertit automatiquement la réponse en JSON
+    // Axios convertit automatiquement la réponse en JSON
+    if (response.data) {
+      return response.data;
+    }
+
+    return response;
   } catch (error) {
     if (error.response) {
       if (error.response.status === 401) {

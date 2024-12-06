@@ -5,7 +5,14 @@ import { useState } from "react";
  *
  * @param {{}} initialState
  * @param {function} validate
- * @returns {{ formData: {}; fieldErrors: {}; globalMessage: {}; setGlobalMessage: function; handleChange: (e: any) => void; validateForm: () => boolean; }\}
+ * @returns {{
+ *   formData: {};
+ *   fieldErrors: {};
+ *   globalMessage: {};
+ *   setGlobalMessage: function;
+ *   handleChange: (e: any) => void;
+ *   validateForm: (formDataFromDOM?: {}) => boolean;
+ * }}
  */
 export const useForm = (initialState, validate) => {
   const [formData, setFormData] = useState(initialState);
@@ -14,20 +21,38 @@ export const useForm = (initialState, validate) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    setFieldErrors({ ...fieldErrors, [name]: "" });
-    setGlobalMessage(null);
+
+    // Met à jour uniquement les champs définis dans initialState
+    if (name in initialState) {
+      setFormData({ ...formData, [name]: value });
+      setFieldErrors({ ...fieldErrors, [name]: "" });
+      setGlobalMessage(null);
+    }
   };
 
-  const validateForm = () => {
-    const errors = validate(formData);
+  const validateForm = (formDataFromDOM = {}) => {
+    // Fusionne les champs contrôlés et non contrôlés
+    const combinedData = { ...formDataFromDOM, ...formData };
+
+    const errors = validate(combinedData);
     setFieldErrors(errors);
+
     if (Object.keys(errors).length > 0) {
-      setGlobalMessage({ type: "error", text: "Veuillez corriger les erreurs dans le formulaire." });
+      setGlobalMessage({
+        type: "error",
+        text: "Veuillez corriger les erreurs dans le formulaire.",
+      });
       return false;
     }
     return true;
   };
 
-  return { formData, fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm };
+  return {
+    formData,
+    fieldErrors,
+    globalMessage,
+    setGlobalMessage,
+    handleChange,
+    validateForm,
+  };
 };

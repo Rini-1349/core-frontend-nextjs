@@ -11,22 +11,9 @@ import TableHeadTh from "./TableHead/TableHeadTh";
 import TableHeadThContent from "./TableHead/TableHeadThContent";
 import Pagination from "./Pagination";
 import Filters from "./Filters";
-
-// Maximum 5 pagination page buttons
-function setPaginationButtons(pagination) {
-  if (pagination.currentPage < 3) {
-    pagination.firstPageButton = 1;
-  } else {
-    pagination.firstPageButton = pagination.currentPage - 2;
-  }
-  if (pagination.firstPageButton + 4 > pagination.totalPages) {
-    pagination.lastPageButton = pagination.totalPages;
-  } else {
-    pagination.lastPageButton = pagination.firstPageButton + 4;
-  }
-
-  return pagination;
-}
+import { useRouter } from "next/navigation";
+import { definePopupParams, removeOneItemFromPagination, setPaginationButtons } from "@/utils/dataTableHelpers";
+import PopupContainer from "../Popup/PopupContainer";
 
 const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, paginationLimits, defaultFilters }) => {
   const [items, setItems] = useState([]);
@@ -35,6 +22,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
   const [tempFilters, setTempFilters] = useState(defaultFilters); // État temporaire pour les entrées utilisateur
   const { openPopup, closePopup } = usePopup();
   const [addFiltersRow, setAddFiltersRow] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const hasFilters = columns.some((col) => col.search);
@@ -67,9 +55,54 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
     loadData();
   }, [filters]);
 
+  // Ecoute des messages envoyés depuis la pop-up (en iframe)
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.origin !== process.env.NEXT_PUBLIC_DOMAIN) return;
+      // Vérifiez le type de message et l'origine pour éviter les problèmes de sécurité
+      if (event.data?.type === "formSubmissionSuccess") {
+        if (event.data.mode === "edit") {
+          const updatedData = event.data.data; // Données reçues (id, firstname, lastname, email, is_verified)
+
+          setItems((prevItems) =>
+            prevItems.map((item) =>
+              item.id === updatedData.id
+                ? { ...item, ...updatedData } // Met à jour l'élément si l'ID correspond
+                : item
+            )
+          );
+        }
+        console.log("Données reçues de l'iframe :", event.data);
+        closePopup();
+      }
+    };
+
+    // Écoutez les messages venant de l'iframe
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [closePopup]);
+
   // Ouvre la pop-up de suppression avec l'élément sélectionné
   const handleDeleteClick = (item, itemDescription) => {
     openPopup(<DeletePopup item={item} itemDescription={itemDescription} onDeleteConfirm={handleDeleteConfirm} closePopup={closePopup} />);
+  };
+
+  // Ouvre le lien dans une autre page ou ouvre la pop-up avec le contenu d'une autre page
+  const handleLinkClick = (url, action) => {
+    if (action.openingType === "popup") {
+      const popupParams = definePopupParams(action);
+      openPopup(
+        <PopupContainer>
+          <iframe src={`${url}${url.includes("?") ? "&" : "?"}modal=true`} style={{ width: "100%", height: "100%" }} />
+        </PopupContainer>,
+        popupParams
+      );
+    } else {
+      router.push(url);
+    }
   };
 
   // Fonction pour supprimer un item
@@ -77,9 +110,11 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
     setIsLoading(true);
     try {
       const response = await deleteItem(itemId);
-      if (response) {
+      if (response.status === 204) {
         // Mettre à jour localement la liste après suppression
         setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+        const updatedPagination = removeOneItemFromPagination(pagination);
+        setPagination(updatedPagination);
         closePopup();
       }
     } catch (error) {
@@ -137,67 +172,59 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
   };
 
   return (
-    <>
-      <div>
-        <Filters filters={tempFilters} onFilterChange={handleFilterChange} paginationLimits={paginationLimits} currentLimit={filters.limit} handlePaginationLimit={handlePaginationLimit} />
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="align-middle inline-block min-w-full">
-              <div className="shadow overflow-hidden">
-                <table className="table-fixed min-w-full divide-y divide-gray-200">
-                  <TableHead>
-                    <tr key="tableLabelsRow">
-                      {columns.map((col) => (
-                        <TableHeadTh key={col.key} onClick={col.sortable ? () => handleSort(col.key) : null}>
-                          <TableHeadThContent thType="label" col={col} filters={tempFilters} />
-                        </TableHeadTh>
-                      ))}
-                    </tr>
-                    {addFiltersRow ? (
-                      <tr key="tableSearchRow">
-                        {columns.map((col) => (
-                          <TableHeadTh key={col.key}>
-                            <TableHeadThContent thType="filter" col={col} filters={tempFilters} onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
-                          </TableHeadTh>
-                        ))}
-                      </tr>
-                    ) : (
-                      ""
-                    )}
-                  </TableHead>
-                  <TableBody>
-                    {isLoading ? (
-                      <TableTr key="loadingDataTr">
-                        <TableTd colSpan={columns.length} key="loadingDataTd">
-                          Chargement...
-                        </TableTd>
-                      </TableTr>
-                    ) : items.length > 0 ? (
-                      items.map((item) => (
-                        <TableTr key={item.id}>
-                          {columns.map((col) => (
-                            <TableTd key={col.key}>
-                              <TableTdContent col={col} item={item} onDeleteClick={handleDeleteClick} />
-                            </TableTd>
-                          ))}
-                        </TableTr>
-                      ))
-                    ) : (
-                      <TableTr key="noResultsTr">
-                        <TableTd colSpan={columns.length} key="noResultsTd">
-                          Aucun résultat trouvé
-                        </TableTd>
-                      </TableTr>
-                    )}
-                  </TableBody>
-                </table>
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col">
+      <Filters filters={tempFilters} onFilterChange={handleFilterChange} paginationLimits={paginationLimits} currentLimit={filters.limit} handlePaginationLimit={handlePaginationLimit} />
+      <div className="table-container">
+        <div className="table-wrapper">
+          <table className="table divide-y divide-gray-200">
+            <TableHead>
+              <tr key="tableLabelsRow">
+                {columns.map((col) => (
+                  <TableHeadTh key={col.key} onClick={col.sortable ? () => handleSort(col.key) : null}>
+                    <TableHeadThContent thType="label" col={col} filters={tempFilters} />
+                  </TableHeadTh>
+                ))}
+              </tr>
+              {addFiltersRow ? (
+                <tr key="tableSearchRow">
+                  {columns.map((col) => (
+                    <TableHeadTh key={col.key}>
+                      <TableHeadThContent thType="filter" col={col} filters={tempFilters} onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
+                    </TableHeadTh>
+                  ))}
+                </tr>
+              ) : null}
+            </TableHead>
+            <TableBody>
+              {isLoading ? (
+                <TableTr key="loadingDataTr">
+                  <TableTd colSpan={columns.length} key="loadingDataTd">
+                    Chargement...
+                  </TableTd>
+                </TableTr>
+              ) : items.length > 0 ? (
+                items.map((item) => (
+                  <TableTr key={item.id}>
+                    {columns.map((col) => (
+                      <TableTd key={col.key}>
+                        <TableTdContent col={col} item={item} onDeleteClick={handleDeleteClick} onLinkClick={handleLinkClick} />
+                      </TableTd>
+                    ))}
+                  </TableTr>
+                ))
+              ) : (
+                <TableTr key="noResultsTr">
+                  <TableTd colSpan={columns.length} key="noResultsTd">
+                    Aucun résultat trouvé
+                  </TableTd>
+                </TableTr>
+              )}
+            </TableBody>
+          </table>
         </div>
       </div>
       <Pagination pagination={pagination} isLoading={isLoading} handlePageChange={handlePageChange} />
-    </>
+    </div>
   );
 };
 

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { register } from "@/services/auth";
-import { Input } from "@/components/Form/Input/Input";
+import { InputGroup } from "@/components/Form/Input/InputGroup";
 import Link from "next/link";
 import { DefaultButton } from "@/components/Button/DefaultButton";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
@@ -68,7 +68,7 @@ export default function Register() {
         <AuthHeading1 title="Créer un compte" />
         <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
           {formFields.map((field) => (
-            <Input key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
+            <InputGroup key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
           ))}
 
           {/* Messages globaux */}

@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { resetPassword } from "@/services/auth";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/Form/Input/Input";
+import { InputGroup } from "@/components/Form/Input/InputGroup";
 import { DefaultButton } from "@/components/Button/DefaultButton";
 import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
@@ -96,7 +96,7 @@ export default function ResetPassword() {
           <form onSubmit={handlePasswordReset}>
             <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
               {formFields.map((field) => (
-                <Input key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
+                <InputGroup key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
               ))}
 
               {/* Messages globaux */}
