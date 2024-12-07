@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "./utils/session";
-import slugMapping from "./lib/slugMapping";
-import { getFrenchSlug } from "@/lib/slugUtils";
+import { getEnglishSlug, getFrenchSlug, isFrenchSlugValid } from "@/lib/slugUtils";
 
 /**
  * Asynchronious Middleware
@@ -17,9 +16,8 @@ export async function middleware(req) {
   const frenchSlug = url.pathname.substring(1); // Extrait le slug sans "/"
 
   // Vérifie si le slug en français existe dans le mapping
-  const englishSlug = Object.keys(slugMapping).find((key) => slugMapping[key] === frenchSlug);
-
-  if (englishSlug) {
+  if (isFrenchSlugValid(frenchSlug)) {
+    const englishSlug = getEnglishSlug(frenchSlug);
     console.log(`[Middleware] Rewriting ${frenchSlug} to ${englishSlug}`);
     url.pathname = `/${englishSlug}`;
     return NextResponse.rewrite(url); // Réécrit l'URL pour servir la bonne page
