@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useTitle } from "@/context/TitleContext";
+import ClientMeta from "@/components/Metadata/ClientMeta";
 
 /**
  * ResendValidationEmail page
@@ -22,6 +24,11 @@ export default function ResendValidationEmail(request) {
   const { setIsLoading } = useIsLoading();
   const [user, setUser] = useState(null);
   const [globalMessage, setGlobalMessage] = useState(null);
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Renvoyer lien validation");
+  });
 
   useEffect(() => {
     const session = getSession(getTokenClientSide());
@@ -61,6 +68,7 @@ export default function ResendValidationEmail(request) {
 
   return (
     <>
+      <ClientMeta title={title} />
       <div>
         <AuthHeading1 title="Adresse email non vérifiée" className="mb-8" />
         <GlobalMessage message={globalMessage} />

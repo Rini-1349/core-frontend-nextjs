@@ -2,6 +2,7 @@
 
 import LayoutContent from "@/components/Loader/LayoutContent";
 import { LoadingProvider } from "@/context/LoadingContext";
+import { TitleProvider } from "@/context/TitleContext";
 
 /**
  * AuthLayout
@@ -13,12 +14,14 @@ import { LoadingProvider } from "@/context/LoadingContext";
  */
 export default function AuthLayout({ children }) {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8">
-        <LoadingProvider>
-          <LayoutContent>{children}</LayoutContent>
-        </LoadingProvider>
+    <TitleProvider>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8">
+          <LoadingProvider>
+            <LayoutContent>{children}</LayoutContent>
+          </LoadingProvider>
+        </div>
       </div>
-    </div>
+    </TitleProvider>
   );
 }

@@ -1,9 +1,12 @@
 "use client";
 
 import DataTable from "@/components/DataTable";
+import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useTitle } from "@/context/TitleContext";
 import { deleteUser, getUsersList } from "@/services/users";
 import { faTrashCan, faPenToSquare, faEye } from "@fortawesome/free-solid-svg-icons";
+import { useEffect } from "react";
 
 const columns = [
   { label: "Nom", key: "lastname", sortable: true, search: "input" },
@@ -28,6 +31,12 @@ const columns = [
         key: "view",
         label: "Voir",
         href: "/users/[id]?mode=view",
+        openingType: "popup",
+        popupModalStyle: {
+          top: "15%",
+          height: "65%",
+        },
+        childDivMaxWidthClass: "max-w-3xl",
         bgColor: "cyan",
         icon: faEye,
         replacePatterns: [
@@ -41,6 +50,12 @@ const columns = [
         key: "edit",
         label: "Modifier",
         href: "/users/[id]?mode=edit",
+        openingType: "popup",
+        popupModalStyle: {
+          top: "15%",
+          height: "65%",
+        },
+        childDivMaxWidthClass: "max-w-3xl",
         bgColor: "indigo",
         icon: faPenToSquare,
         replacePatterns: [
@@ -85,10 +100,18 @@ const defaultFilters = {
 
 export default function UsersList() {
   const { isLoading, setIsLoading } = useIsLoading();
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Utilisateurs");
+  });
 
   return (
-    <div>
-      <DataTable columns={columns} fetchData={getUsersList} deleteItem={deleteUser} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} />
-    </div>
+    <>
+      <ClientMeta title={title} description="Liste des utilisateur" />
+      <div>
+        <DataTable columns={columns} fetchData={getUsersList} deleteItem={deleteUser} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} />
+      </div>
+    </>
   );
 }

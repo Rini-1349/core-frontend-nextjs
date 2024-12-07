@@ -10,6 +10,9 @@ import { useForm } from "@/hooks/useForm";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
+import ClientMeta from "@/components/Metadata/ClientMeta";
+import { useTitle } from "@/context/TitleContext";
+import { useEffect } from "react";
 
 /**
  * Register page
@@ -20,6 +23,11 @@ import { useIsLoading } from "@/context/LoadingContext";
 export default function Register() {
   const router = useRouter();
   const { setIsLoading } = useIsLoading();
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Inscription");
+  });
 
   // Configuration du formulaire
   const initialFormState = { lastname: "", firstname: "", username: "", password: "", confirmPassword: "" };
@@ -64,6 +72,7 @@ export default function Register() {
 
   return (
     <>
+      <ClientMeta title={title} />
       <form className="space-y-6" onSubmit={handleSubmit}>
         <AuthHeading1 title="Créer un compte" />
         <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">

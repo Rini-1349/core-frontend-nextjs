@@ -9,6 +9,9 @@ import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { useForm } from "@/hooks/useForm";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
+import ClientMeta from "@/components/Metadata/ClientMeta";
+import { useTitle } from "@/context/TitleContext";
+import { useEffect } from "react";
 
 /**
  * ForgotPassword page
@@ -18,6 +21,11 @@ import { useIsLoading } from "@/context/LoadingContext";
  */
 export default function ForgotPassword() {
   const { setIsLoading } = useIsLoading();
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Mot de passe oublié");
+  });
 
   // Configuration du formulaire
   const initialFormState = { username: "" };
@@ -55,6 +63,7 @@ export default function ForgotPassword() {
 
   return (
     <>
+      <ClientMeta title={title} />
       <form className="space-y-6" onSubmit={handleForgotPassword}>
         <AuthHeading1 title="Mot de passe oublié" />
         <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">

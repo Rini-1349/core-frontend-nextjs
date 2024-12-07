@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import ClickOutside from "@/components/ClickOutside";
 import { useRouter } from "next/navigation";
 import { clearSession } from "@/utils/session";
 import { getFrenchSlug } from "@/lib/slugUtils";
-import { getSession, getTokenClientSide } from "@/utils/session";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faUser } from "@fortawesome/free-solid-svg-icons";
+import { useSession } from "@/context/SessionContext";
 
 /**
  * DropdownUser component
@@ -16,14 +16,7 @@ import { faChevronDown, faUser } from "@fortawesome/free-solid-svg-icons";
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
-  //const session = getSession(getTokenClientSide());
-  const [session, setSession] = useState(null);
-
-  useEffect(() => {
-    // Appelé uniquement côté client
-    const token = getTokenClientSide();
-    setSession(getSession(token));
-  }, []);
+  const { session } = useSession();
 
   const handleLogout = () => {
     clearSession(); // Efface le cookie de session

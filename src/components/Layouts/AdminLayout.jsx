@@ -7,6 +7,7 @@ import { PopupProvider } from "@/context/PopupContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import LayoutContent from "../Loader/LayoutContent";
 import { useSearchParams } from "next/navigation";
+import { SessionProvider } from "@/context/SessionContext";
 
 /**
  * AdminLayout component
@@ -22,18 +23,20 @@ export default function AdminLayout({ children }) {
   const isModal = searchParams.get("modal") ? true : false;
 
   return (
-    <div className="page-container">
-      {!isModal && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-      <div className="main-content">
-        {!isModal && <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-        <div className="content-wrapper">
-          <PopupProvider>
-            <LoadingProvider>
-              <LayoutContent>{children}</LayoutContent>
-            </LoadingProvider>
-          </PopupProvider>
+    <SessionProvider>
+      <div className="page-container">
+        {!isModal && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+        <div className="main-content">
+          {!isModal && <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
+          <div className="content-wrapper">
+            <PopupProvider>
+              <LoadingProvider>
+                <LayoutContent>{children}</LayoutContent>
+              </LoadingProvider>
+            </PopupProvider>
+          </div>
         </div>
       </div>
-    </div>
+    </SessionProvider>
   );
 }

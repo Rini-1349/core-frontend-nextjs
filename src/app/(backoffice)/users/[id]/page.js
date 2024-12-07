@@ -1,7 +1,9 @@
 "use client";
 
 import Form from "@/components/Form";
+import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useTitle } from "@/context/TitleContext";
 import { getUserDetails, updateUser } from "@/services/users";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
 import { faAt, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -26,6 +28,12 @@ export default function UserDetails() {
     if (!data.email) errors.email = "L'adresse email est obligatoire.";
     return errors;
   };
+
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle(isReadOnly ? "Détails utilisateur" : "Modifier utilisateur");
+  });
 
   // Récupération des données utilisateur
   useEffect(() => {
@@ -83,7 +91,12 @@ export default function UserDetails() {
 
   return (
     <div>
-      <h1>{isReadOnly ? "Détails de l’utilisateur" : "Modifier l’utilisateur"}</h1>
+      <ClientMeta title={title} />
+      {isModal && (
+        <div className="flex justify-center items-center pb-3 mb-3 border-b border-gray-300 dark:border-gray-600">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
+        </div>
+      )}
       <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} />
     </div>
   );

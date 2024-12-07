@@ -10,6 +10,8 @@ import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useTitle } from "@/context/TitleContext";
+import ClientMeta from "@/components/Metadata/ClientMeta";
 
 /**
  * VerifyEmail page
@@ -25,6 +27,11 @@ export default function VerifyEmail() {
   const searchParams = useSearchParams();
   const params = searchParams.toString();
   const [globalMessage, setGlobalMessage] = useState(null);
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Vérification email");
+  });
 
   useEffect(() => {
     const verifyEmailToken = async () => {
@@ -50,6 +57,7 @@ export default function VerifyEmail() {
 
   return (
     <>
+      <ClientMeta title={title} />
       <div>
         <AuthHeading1 title="Vérification adresse email" className="mb-8" />
         <GlobalMessage message={globalMessage} />

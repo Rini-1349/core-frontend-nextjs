@@ -12,6 +12,8 @@ import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { useForm } from "@/hooks/useForm";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
+import ClientMeta from "@/components/Metadata/ClientMeta";
+import { useTitle } from "@/context/TitleContext";
 
 /**
  * ResetPassword page
@@ -25,6 +27,11 @@ export default function ResetPassword() {
   const [isTokenValid, setIsTokenValid] = useState(false);
   const searchParams = useSearchParams();
   const queryParams = searchParams.toString();
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Réinitialisation mot de passe");
+  });
 
   // Configuration du formulaire
   const initialFormState = { password: "", confirmPassword: "" };
@@ -89,6 +96,7 @@ export default function ResetPassword() {
 
   return (
     <>
+      <ClientMeta title={title} />
       <div>
         <AuthHeading1 title="Réinitialisation mot de passe" />
 

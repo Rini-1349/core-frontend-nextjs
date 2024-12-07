@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, getTokenClientSide } from "@/utils/session";
+import { useTitle } from "@/context/TitleContext";
+import ClientMeta from "@/components/Metadata/ClientMeta";
 
 /**
  * Home page
@@ -13,6 +15,11 @@ import { getSession, getTokenClientSide } from "@/utils/session";
 export default function Home() {
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Accueil");
+  });
 
   useEffect(() => {
     const session = getSession(getTokenClientSide());
@@ -23,5 +30,9 @@ export default function Home() {
 
   if (!user) return null;
 
-  return <div></div>;
+  return (
+    <div>
+      <ClientMeta title={title} />
+    </div>
+  );
 }

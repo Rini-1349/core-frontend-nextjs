@@ -11,6 +11,9 @@ import { useForm } from "@/hooks/useForm";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useTitle } from "@/context/TitleContext";
+import { useEffect } from "react";
+import ClientMeta from "@/components/Metadata/ClientMeta";
 
 /**
  * Login page
@@ -21,6 +24,11 @@ import { useIsLoading } from "@/context/LoadingContext";
 export default function Login() {
   const router = useRouter();
   const { setIsLoading } = useIsLoading();
+  const { title, setTitle } = useTitle();
+
+  useEffect(() => {
+    setTitle("Connexion");
+  });
 
   // Configuration du formulaire
   const initialFormState = { username: "", password: "" };
@@ -62,6 +70,7 @@ export default function Login() {
 
   return (
     <>
+      <ClientMeta title={title} />
       <form className="space-y-6" onSubmit={handleSubmit}>
         <AuthHeading1 title="Connexion" />
 

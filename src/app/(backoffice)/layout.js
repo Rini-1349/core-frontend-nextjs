@@ -1,14 +1,7 @@
-import AdminLayout from "@/components/Layouts/AdminLayout";
+"use client";
 
-/**
- * metadata
- *
- * @type {{ title: string; description: string; }\}
- */
-export const metadata = {
-  title: "Administration",
-  description: "Administration",
-};
+import AdminLayout from "@/components/Layouts/AdminLayout";
+import { TitleProvider } from "@/context/TitleContext";
 
 /**
  * BackOfficeLayout
@@ -21,7 +14,9 @@ export const metadata = {
 export default function BackOfficeLayout({ children }) {
   return (
     <>
-      <AdminLayout>{children}</AdminLayout>
+      <TitleProvider>
+        <AdminLayout>{children}</AdminLayout>
+      </TitleProvider>
     </>
   );
 }

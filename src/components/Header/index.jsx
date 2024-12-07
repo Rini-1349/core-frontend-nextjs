@@ -4,6 +4,7 @@ import DropdownMessage from "./DropdownMessage";
 import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
+import { useTitle } from "@/context/TitleContext";
 
 /**
  * Header component
@@ -13,12 +14,14 @@ import Image from "next/image";
  */
 const Header = (props) => {
   const { sidebarOpen, setSidebarOpen } = props;
+  const { title } = useTitle();
 
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none top-backoffice">
-      <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
+      <div className="flex w-full items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
+        {/* Left Section */}
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
-          {/* <!-- Hamburger Toggle BTN --> */}
+          {/* Hamburger Toggle Button */}
           <button
             aria-controls="sidebar"
             onClick={(e) => {
@@ -49,6 +52,11 @@ const Header = (props) => {
           </Link>
         </div>
 
+        {/* Center Section: Title */}
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <h1 className="text-xl font-bold text-center text-gray-800 dark:text-white">{title}</h1>
+        </div>
+
         {/* <div className="hidden sm:block">
           <form action="https://formbold.com/s/unique_form_id" method="POST">
             <div className="relative">
@@ -64,6 +72,7 @@ const Header = (props) => {
           </form>
         </div> */}
 
+        {/* Right Section */}
         <div className="flex ml-auto items-center gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">
             {/* <!-- Dark Mode Toggler --> */}
