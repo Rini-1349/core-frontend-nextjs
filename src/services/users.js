@@ -26,6 +26,39 @@ export async function getUsersList(filters) {
 }
 
 /**
+ * getProfile function
+ *
+ * @export
+ * @async
+ * @returns {Axios}
+ */
+export async function getProfile() {
+  return apiFetch(`profile`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
+  });
+}
+
+/**
+ * updateProfile function
+ *
+ * @export
+ * @async
+ * @param {{}} data
+ * @returns {Axios}
+ */
+export async function updateProfile({ data }) {
+  return apiFetch(`profile`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
  * getUserDetails function
  *
  * @export

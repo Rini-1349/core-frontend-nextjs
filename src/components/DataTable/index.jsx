@@ -107,7 +107,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
       const popupParams = definePopupParams(action);
       openPopup(
         <PopupContainer closePopup={closePopup}>
-          <iframe src={`${url}${url.includes("?") ? "&" : "?"}modal=true`} style={{ width: "100%", height: "100%" }} />
+          <iframe src={`${url}${url.includes("?") ? "&" : "?"}modal=true`} style={{ width: "100%", height: "100%", borderRadius: "0.5rem" }} />
         </PopupContainer>,
         popupParams
       );

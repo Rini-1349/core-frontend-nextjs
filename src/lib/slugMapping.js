@@ -10,6 +10,7 @@ const slugMapping = {
   register: "inscription",
   users: "utilisateurs",
   new: "nouveau",
+  profile: "profil",
 };
 
 export default slugMapping;
