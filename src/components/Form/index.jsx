@@ -30,7 +30,7 @@ function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
   }
 }
 
-export default function Form({ fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {} }) {
+export default function Form({ children, fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {} }) {
   const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate);
   const router = useRouter();
 
@@ -94,6 +94,7 @@ export default function Form({ fields, onSubmit, isReadOnly, item, setMode, vali
 
             return elements;
           })}
+          <div className="px-2">{children}</div>
         </div>
         <div className="flex justify-center">{globalMessage && <GlobalMessage message={globalMessage} />}</div>
         <div className="mt-4 flex justify-center gap-2">{!isReadOnly && <DefaultButton type="submit" title="Enregistrer" widthClass="" btnStyle="success" />}</div>

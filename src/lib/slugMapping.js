@@ -11,6 +11,7 @@ const slugMapping = {
   users: "utilisateurs",
   new: "nouveau",
   profile: "profil",
+  "edit-password": "modification-mot-de-passe",
 };
 
 export default slugMapping;

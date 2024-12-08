@@ -1,5 +1,6 @@
 "use client";
 
+import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
@@ -78,10 +79,6 @@ export default function UserDetails() {
 
   if (!user) return <div></div>;
 
-  if (mode === "add") {
-    formFields;
-  }
-
   const handleSubmit = async (values) => {
     setIsLoading(true); // Activer le loader
 
@@ -118,7 +115,20 @@ export default function UserDetails() {
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
         </div>
       )}
-      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} />
+      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode}>
+        {mode === "edit" && !isModal && (
+          <div className="flex">
+            <DefaultButton
+              type="button"
+              title="Modifier mot de passe"
+              onClick={() => {
+                window.location.href = `/${getFrenchSlug("users/")}/${user.id}/${getFrenchSlug("edit-password/")}`;
+              }}
+              btnStyle="warning"
+            />
+          </div>
+        )}
+      </Form>
     </div>
   );
 }

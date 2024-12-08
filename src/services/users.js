@@ -112,6 +112,25 @@ export async function updateUser({ id, data }) {
 }
 
 /**
+ * editUserPassword function
+ *
+ * @export
+ * @async
+ * @param {number} id
+ * @param {{}} data
+ * @returns {Axios}
+ */
+export async function editUserPassword({ id, data }) {
+  return apiFetch(`users/${id}/edit-password`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
  * deleteUser function
  *
  * @export

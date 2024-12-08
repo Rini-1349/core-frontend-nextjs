@@ -31,7 +31,7 @@ const columns = [
       {
         key: "view",
         label: "Voir",
-        href: `/${getFrenchSlug("users/new")}/[id]?mode=view`,
+        href: `/${getFrenchSlug("users")}/[id]?mode=view`,
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -50,7 +50,7 @@ const columns = [
       {
         key: "edit",
         label: "Modifier",
-        href: `/${getFrenchSlug("users/new")}/[id]?mode=edit`,
+        href: `/${getFrenchSlug("users")}/[id]?mode=edit`,
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
