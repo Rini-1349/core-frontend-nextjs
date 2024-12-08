@@ -1,4 +1,4 @@
-import { getFrenchSlug } from "@/lib/slugUtils";
+import { getEnglishSlug, getFrenchSlug } from "@/lib/slugUtils";
 import { jwtDecode } from "jwt-decode";
 
 /**
@@ -58,8 +58,19 @@ export function getTokenClientSide() {
 }
 
 export function redirectToLogin() {
+  if (typeof window !== "undefined") {
+    const currentUrl = getEnglishSlug(window.location.pathname);
+    const excludedUrls = ["/login", "/register", "/reset-password", "/forgot-password", "/verify-email", "/resend-validation-email"]; // Liste des URL à exclure
+
+    // Si l'URL actuelle fait partie des exclusions, on ignore la redirection
+    if (excludedUrls.some((url) => currentUrl.includes(url))) {
+      return;
+    }
+  }
+
   clearSession();
   if (typeof window !== "undefined") {
+    console.log("Redirecting to login.");
     window.location.href = `/${getFrenchSlug("login")}`;
   }
 }

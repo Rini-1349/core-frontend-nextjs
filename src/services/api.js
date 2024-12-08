@@ -31,7 +31,7 @@ async function apiFetch(endpoint, options = {}) {
   } catch (error) {
     if (error.response) {
       if (error.response.status === 401) {
-        console.log("[API] Unauthorized. Redirecting to login.");
+        console.log("[API] Unauthorized.");
         redirectToLogin();
       }
       // Si l'erreur provient de la réponse du serveur
