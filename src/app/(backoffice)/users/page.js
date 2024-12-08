@@ -4,6 +4,7 @@ import DataTable from "@/components/DataTable";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
+import { getFrenchSlug } from "@/lib/slugUtils";
 import { deleteUser, getUsersList } from "@/services/users";
 import { faTrashCan, faPenToSquare, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
@@ -30,7 +31,7 @@ const columns = [
       {
         key: "view",
         label: "Voir",
-        href: "/users/[id]?mode=view",
+        href: `/${getFrenchSlug("users/new")}/[id]?mode=view`,
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -49,7 +50,7 @@ const columns = [
       {
         key: "edit",
         label: "Modifier",
-        href: "/users/[id]?mode=edit",
+        href: `/${getFrenchSlug("users/new")}/[id]?mode=edit`,
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -98,6 +99,19 @@ const defaultFilters = {
   limit: 25,
 };
 
+const addAction = {
+  key: "add",
+  label: "Ajouter utilisateur",
+  bgColor: "red",
+  href: `/${getFrenchSlug("users/new")}`,
+  openingType: "popup",
+  popupModalStyle: {
+    top: "15%",
+    height: "65%",
+  },
+  childDivMaxWidthClass: "max-w-3xl",
+};
+
 export default function UsersList() {
   const { isLoading, setIsLoading } = useIsLoading();
   const { title, setTitle } = useTitle();
@@ -110,7 +124,7 @@ export default function UsersList() {
     <>
       <ClientMeta title={title} description="Liste des utilisateur" />
       <div>
-        <DataTable columns={columns} fetchData={getUsersList} deleteItem={deleteUser} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} />
+        <DataTable columns={columns} fetchData={getUsersList} deleteItem={deleteUser} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} addAction={addAction} />
       </div>
     </>
   );

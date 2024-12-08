@@ -4,9 +4,10 @@ import Form from "@/components/Form";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
-import { getUserDetails, updateUser } from "@/services/users";
+import { getFrenchSlug } from "@/lib/slugUtils";
+import { createUser, getUserDetails, updateUser } from "@/services/users";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
-import { faAt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -17,27 +18,43 @@ export default function UserDetails() {
   const searchParams = useSearchParams();
 
   const [user, setUser] = useState(null);
-  const [mode, setMode] = useState(searchParams.get("mode") === "edit" ? "edit" : "view");
+  const [mode, setMode] = useState(id === "new" ? "add" : searchParams.get("mode") === "edit" ? "edit" : "view");
   const [isModal, setIsModal] = useState(searchParams.get("modal") === "true" ? true : false);
   const isReadOnly = mode === "view"; // Mode lecture seule si 'view'
+  const [formFields, setFormFields] = useState();
 
   const validate = (data) => {
     const errors = {};
     if (!data.lastname) errors.lastname = "Le nom est obligatoire.";
     if (!data.firstname) errors.firstname = "Le prénom est obligatoire.";
     if (!data.email) errors.email = "L'adresse email est obligatoire.";
+    if (data.password !== data.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas.";
     return errors;
   };
 
   const { title, setTitle } = useTitle();
 
+  // Définir le titre de la page en fonction du mode
   useEffect(() => {
-    setTitle(isReadOnly ? "Détails utilisateur" : "Modifier utilisateur");
-  });
+    setFormFields([
+      { name: "lastname", label: "Nom", type: "text", icon: faUser },
+      { name: "firstname", label: "Prénom", type: "text", icon: faUserRegular },
+      { name: "email", label: "Email", type: "email", icon: faAt },
+      { name: "is_verified", label: "Adresse email vérifiée", type: "toggle" },
+    ]);
+    if (mode === "view") {
+      setTitle("Détails utilisateur");
+    } else if (mode === "edit") {
+      setTitle("Modifier utilisateur");
+    } else if (mode === "add") {
+      setTitle("Ajouter utilisateur");
+      setFormFields((prev) => [...prev, { name: "password", label: "Mot de passe", type: "password", icon: faKey }, { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", icon: faKey }]);
+    }
+  }, [mode]);
 
   // Récupération des données utilisateur
   useEffect(() => {
-    if (id) {
+    if (id && id !== "new") {
       // Fonction pour récupérer les données
       const loadData = async () => {
         setIsLoading(true);
@@ -54,23 +71,27 @@ export default function UserDetails() {
       };
 
       loadData();
+    } else if (mode === "add") {
+      setUser({ lastname: "", firstname: "", email: "", is_verified: 0 }); // Formulaire vide pour ajout
     }
-  }, [id]);
+  }, [id, mode]);
 
   if (!user) return <div></div>;
 
-  const formFields = [
-    { name: "lastname", label: "Nom", type: "text", icon: faUser },
-    { name: "firstname", label: "Prénom", type: "text", icon: faUserRegular },
-    { name: "email", label: "Email", type: "email", icon: faAt },
-    { name: "is_verified", label: "Adresse email vérifiée", type: "toggle" },
-  ];
+  if (mode === "add") {
+    formFields;
+  }
 
   const handleSubmit = async (values) => {
     setIsLoading(true); // Activer le loader
 
     try {
-      const response = await updateUser({ id, data: values });
+      let response;
+      if (mode === "edit") {
+        response = await updateUser({ id, data: values });
+      } else if (mode === "add") {
+        response = await createUser(values);
+      }
       // Si ouverture en modale : envoi des informations à la page parente
       if (isModal) {
         window.parent.postMessage({
@@ -79,7 +100,7 @@ export default function UserDetails() {
           mode: mode,
         });
       }
-      return { type: "success", text: "Mise à jour effectuée" };
+      return { type: "success", text: `${mode === "add" && !isModal ? "Utilisateur ajouté avec succès. Redirection..." : "Utilisateur modifié avec succès"}`, redirectUrl: mode === "add" && !isModal ? `/${getFrenchSlug("users")}/${response.id}` : "" };
     } catch (error) {
       console.log(error);
       console.log("Signup failed", error);

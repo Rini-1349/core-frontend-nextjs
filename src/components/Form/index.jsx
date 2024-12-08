@@ -5,6 +5,7 @@ import { DefaultButton } from "../Button/DefaultButton";
 import { useForm } from "@/hooks/useForm";
 import { GlobalMessage } from "./Message/GlobalMessage";
 import { formatToogleValueIntoBoolean, updateToggleInputs } from "@/utils/toggleHelpers";
+import { useRouter } from "next/navigation";
 
 // Traduction de la largeur en classes Tailwind
 function defineWidthClass(field) {
@@ -30,7 +31,8 @@ function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
 }
 
 export default function Form({ fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {} }) {
-  const { formData, fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate);
+  const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate);
+  const router = useRouter();
 
   // Récupère les toggle pour un traitement spécial
   const [toggleInputs, setToggleInputs] = useState([]);
@@ -51,6 +53,9 @@ export default function Form({ fields, onSubmit, isReadOnly, item, setMode, vali
         // Appelle la fonction onSubmit et attend la réponse
         const response = await onSubmit(formDataFromDOM);
         setGlobalMessage(response); // Met à jour le message global avec le retour de onSubmit
+        if (response.redirectUrl) {
+          setTimeout(() => router.push(response.redirectUrl), 1000);
+        }
       } catch (error) {
         // Gère les erreurs éventuelles
         setGlobalMessage({ type: "error", text: "Une erreur est survenue lors de la soumission du formulaire." });
@@ -60,23 +65,9 @@ export default function Form({ fields, onSubmit, isReadOnly, item, setMode, vali
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex flex-wrap -mx-2">
-        {fields.map((field) => {
-          const widthClass = defineWidthClass(field);
-          const elements = [
-            <div key={field.name} className={`px-2 my-2 ${widthClass}`}>
-              {generateInput(field, item, isReadOnly, fieldErrors, handleChange)}
-            </div>,
-            field.breakAfter && <div key={`break-${field.name}`} className="w-full clear-both"></div>, // Retour à la ligne forcé si demandé
-          ];
-
-          return elements;
-        })}
-      </div>
-      <div className="flex justify-center">{globalMessage && <GlobalMessage message={globalMessage} />}</div>
-      <div className="mt-4 flex justify-center gap-2">
-        {isReadOnly ? (
+    <>
+      {isReadOnly && (
+        <div className="flex mb-4">
           <DefaultButton
             type="button"
             title="Modifier"
@@ -86,14 +77,27 @@ export default function Form({ fields, onSubmit, isReadOnly, item, setMode, vali
             }}
             btnStyle="warning"
             widthClass=""
+            className="ml-auto"
           />
-        ) : (
-          <>
-            <DefaultButton type="submit" title="Enregistrer" widthClass="" btnStyle="success" />
-            <DefaultButton type="button" title="Annuler" onClick={() => setMode("view")} btnStyle="danger" widthClass="" />
-          </>
-        )}
-      </div>
-    </form>
+        </div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-wrap -mx-2">
+          {fields.map((field) => {
+            const widthClass = defineWidthClass(field);
+            const elements = [
+              <div key={field.name} className={`px-2 my-2 ${widthClass}`}>
+                {generateInput(field, item, isReadOnly, fieldErrors, handleChange)}
+              </div>,
+              field.breakAfter && <div key={`break-${field.name}`} className="w-full clear-both"></div>, // Retour à la ligne forcé si demandé
+            ];
+
+            return elements;
+          })}
+        </div>
+        <div className="flex justify-center">{globalMessage && <GlobalMessage message={globalMessage} />}</div>
+        <div className="mt-4 flex justify-center gap-2">{!isReadOnly && <DefaultButton type="submit" title="Enregistrer" widthClass="" btnStyle="success" />}</div>
+      </form>
+    </>
   );
 }

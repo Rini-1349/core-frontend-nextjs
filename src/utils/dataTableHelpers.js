@@ -20,6 +20,12 @@ export function removeOneItemFromPagination(pagination) {
 
   return pagination;
 }
+export function addOneItemToagination(pagination) {
+  pagination.totalItems++;
+  pagination.endItem++;
+
+  return pagination;
+}
 
 export function definePopupParams(action) {
   return {

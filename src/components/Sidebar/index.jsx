@@ -7,6 +7,7 @@ import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { faKey, faUsers, faUsersGear, faXmarksLines } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getFrenchSlug } from "@/lib/slugUtils";
 
 /**
  * menuGroups array
@@ -21,7 +22,7 @@ const menuGroups = [
         label: "Gestion utilisateurs",
         route: "#",
         children: [
-          { label: "Utilisateurs", route: "/users", icon: faUsersGear },
+          { label: "Utilisateurs", route: `/${getFrenchSlug("users")}`, icon: faUsersGear },
           { label: "Rôles", route: "/users", icon: faKey },
         ],
       },

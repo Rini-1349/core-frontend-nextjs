@@ -12,10 +12,11 @@ import TableHeadThContent from "./TableHead/TableHeadThContent";
 import Pagination from "./Pagination";
 import Filters from "./Filters";
 import { useRouter } from "next/navigation";
-import { definePopupParams, removeOneItemFromPagination, setPaginationButtons } from "@/utils/dataTableHelpers";
+import { addOneItemToagination, definePopupParams, removeOneItemFromPagination, setPaginationButtons } from "@/utils/dataTableHelpers";
 import PopupContainer from "../Popup/PopupContainer";
+import ContentPageHeader from "./ContentPageHeader";
 
-const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, paginationLimits, defaultFilters }) => {
+const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, paginationLimits, defaultFilters, addAction }) => {
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState([]);
   const [filters, setFilters] = useState(defaultFilters);
@@ -61,9 +62,8 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
       if (event.origin !== process.env.NEXT_PUBLIC_DOMAIN) return;
       // Vérifiez le type de message et l'origine pour éviter les problèmes de sécurité
       if (event.data?.type === "formSubmissionSuccess") {
+        const updatedData = event.data.data; // Données reçues (id, firstname, lastname, email, is_verified)
         if (event.data.mode === "edit") {
-          const updatedData = event.data.data; // Données reçues (id, firstname, lastname, email, is_verified)
-
           setItems((prevItems) =>
             prevItems.map((item) =>
               item.id === updatedData.id
@@ -71,6 +71,17 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
                 : item
             )
           );
+        } else if (event.data.mode === "add") {
+          setItems((prevItems) => {
+            const itemExists = prevItems.some((item) => item.id === updatedData.id);
+            if (itemExists) {
+              return prevItems.map((item) => (item.id === updatedData.id ? { ...item, ...updatedData } : item));
+            } else {
+              return [...prevItems, updatedData]; // Ajoute le nouvel élément
+            }
+          });
+          const updatedPagination = addOneItemToagination(pagination);
+          setPagination(updatedPagination);
         }
         console.log("Données reçues de l'iframe :", event.data);
         closePopup();
@@ -173,6 +184,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
 
   return (
     <div className="flex flex-col">
+      <ContentPageHeader action={addAction} onLinkClick={handleLinkClick} />
       <Filters filters={tempFilters} onFilterChange={handleFilterChange} paginationLimits={paginationLimits} currentLimit={filters.limit} handlePaginationLimit={handlePaginationLimit} />
       <div className="table-container">
         <div className="table-wrapper">

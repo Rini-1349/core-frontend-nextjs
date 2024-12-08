@@ -9,6 +9,7 @@ const slugMapping = {
   "forgot-password": "mot-de-passe-oublie",
   register: "inscription",
   users: "utilisateurs",
+  new: "nouveau",
 };
 
 export default slugMapping;
