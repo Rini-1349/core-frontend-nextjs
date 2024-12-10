@@ -1,13 +1,14 @@
 "use client";
 
+import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
+import { getFrenchSlug } from "@/lib/slugUtils";
 import { getProfile, updateProfile } from "@/services/users";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
 import { faAt, faUser } from "@fortawesome/free-solid-svg-icons";
-import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Profile() {
@@ -30,7 +31,7 @@ export default function Profile() {
   const formFields = [
     { name: "lastname", label: "Nom", type: "text", icon: faUser },
     { name: "firstname", label: "Prénom", type: "text", icon: faUserRegular },
-    { name: "email", label: "Email", type: "email", icon: faAt },
+    { name: "email", label: "Email", type: "email", breakAfter: true, icon: faAt },
   ];
 
   // Récupération des données utilisateur
@@ -59,8 +60,7 @@ export default function Profile() {
     setIsLoading(true); // Activer le loader
 
     try {
-      let response;
-      response = await updateProfile({ data: values });
+      const response = await updateProfile({ data: values });
 
       return { type: "success", text: "Profil mis à jour" };
     } catch (error) {
@@ -75,7 +75,18 @@ export default function Profile() {
   return (
     <div>
       <ClientMeta title={title} />
-      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={false} setMode="edit" />
+      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={false} setMode="edit">
+        <div className="flex">
+          <DefaultButton
+            type="button"
+            title="Modifier mot de passe"
+            onClick={() => {
+              window.location.href = `/${getFrenchSlug("profile/")}/${getFrenchSlug("edit-password/")}`;
+            }}
+            btnStyle="warning"
+          />
+        </div>
+      </Form>
     </div>
   );
 }

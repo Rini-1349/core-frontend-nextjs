@@ -59,6 +59,24 @@ export async function updateProfile({ data }) {
 }
 
 /**
+ * editProfilePassword function
+ *
+ * @export
+ * @async
+ * @param {{}} data
+ * @returns {Axios}
+ */
+export async function editProfilePassword({ data }) {
+  return apiFetch(`profile/edit-password`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
  * getUserDetails function
  *
  * @export

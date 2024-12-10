@@ -8,6 +8,8 @@ import { LoadingProvider } from "@/context/LoadingContext";
 import LayoutContent from "../Loader/LayoutContent";
 import { useSearchParams } from "next/navigation";
 import { SessionProvider } from "@/context/SessionContext";
+import { AlertProvider } from "@/context/AlertContext";
+import PageAlert from "../PageAlert";
 
 /**
  * AdminLayout component
@@ -29,11 +31,14 @@ export default function AdminLayout({ children }) {
         <div className="main-content">
           {!isModal && <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
           <div className="content-wrapper">
-            <PopupProvider>
-              <LoadingProvider>
-                <LayoutContent>{children}</LayoutContent>
-              </LoadingProvider>
-            </PopupProvider>
+            <AlertProvider>
+              <PageAlert />
+              <PopupProvider>
+                <LoadingProvider>
+                  <LayoutContent>{children}</LayoutContent>
+                </LoadingProvider>
+              </PopupProvider>
+            </AlertProvider>
           </div>
         </div>
       </div>

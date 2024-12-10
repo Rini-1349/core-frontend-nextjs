@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { addOneItemToagination, definePopupParams, removeOneItemFromPagination, setPaginationButtons } from "@/utils/dataTableHelpers";
 import PopupContainer from "../Popup/PopupContainer";
 import ContentPageHeader from "./ContentPageHeader";
+import { useAlert } from "@/context/AlertContext";
 
 const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, paginationLimits, defaultFilters, addAction }) => {
   const [items, setItems] = useState([]);
@@ -22,6 +23,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
   const [filters, setFilters] = useState(defaultFilters);
   const [tempFilters, setTempFilters] = useState(defaultFilters); // État temporaire pour les entrées utilisateur
   const { openPopup, closePopup } = usePopup();
+  const { showAlert } = useAlert();
   const [addFiltersRow, setAddFiltersRow] = useState(false);
   const router = useRouter();
 
@@ -84,6 +86,10 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
           setPagination(updatedPagination);
         }
         console.log("Données reçues de l'iframe :", event.data);
+        showAlert({
+          type: "success",
+          text: "Opération effectuée avec succès",
+        });
         closePopup();
       }
     };
@@ -126,10 +132,19 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
         setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
         const updatedPagination = removeOneItemFromPagination(pagination);
         setPagination(updatedPagination);
+        showAlert({
+          type: "success",
+          text: "Suppression effectuée.",
+        });
         closePopup();
       }
     } catch (error) {
       console.log(error.message);
+      showAlert({
+        type: "error",
+        text: "Une erreur est apparue pendant la suppression.",
+      });
+      closePopup();
     } finally {
       setIsLoading(false); // Désactiver le loader
     }

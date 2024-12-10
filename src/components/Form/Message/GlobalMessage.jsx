@@ -1,6 +1,3 @@
-import { ConfirmationMessage } from "./ConfirmationMessage";
-import { ErrorMessage } from "./ErrorMessage";
-
 /**
  * GlobalMessage component
  *
@@ -9,13 +6,25 @@ import { ErrorMessage } from "./ErrorMessage";
  * @returns {JSX.Element}
  */
 function GlobalMessage({ message }) {
+  let color = "blue";
   if (message) {
-    if (message.type === "success") {
-      return <ConfirmationMessage text={message.text} />;
-    } else if (message.type === "error") {
-      return <ErrorMessage text={message.text} />;
+    switch (message.type) {
+      case "success":
+        color = "green";
+        break;
+      case "error":
+        color = "red";
+        break;
     }
   }
+
+  return (
+    message && (
+      <div className={`p-4 mb-4 text-sm text-${color}-800 rounded-lg bg-${color}-50`} role="alert">
+        <span className="font-medium">{message.heading}</span> {message.text}
+      </div>
+    )
+  );
 }
 
 export { GlobalMessage };

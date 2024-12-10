@@ -20,7 +20,7 @@ const DropdownUser = () => {
 
   const handleLogout = () => {
     clearSession(); // Efface le cookie de session
-    router.push(getFrenchSlug("login"));
+    router.push(getFrenchSlug("/login"));
   };
 
   return (
