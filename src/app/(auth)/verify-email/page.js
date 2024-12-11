@@ -39,7 +39,7 @@ export default function VerifyEmail() {
       try {
         const response = await verifyEmail(params); // Vérifie le token de vérification d'email
         if (response) {
-          setGlobalMessage({ type: "success", text: "Votre email a été vérifié avec succès." });
+          setGlobalMessage({ type: "success", text: response.message });
           setIsEmailVerified(true); // Confirmation de la vérification de l'email
           clearSession(); // Efface la session après la vérification réussie
         }

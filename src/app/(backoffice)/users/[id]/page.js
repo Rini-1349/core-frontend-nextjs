@@ -97,7 +97,7 @@ export default function UserDetails() {
           mode: mode,
         });
       }
-      return { type: "success", text: `${mode === "add" && !isModal ? "Utilisateur ajouté avec succès. Redirection..." : "Utilisateur modifié avec succès"}`, redirectUrl: mode === "add" && !isModal ? `/${getFrenchSlug("users")}/${response.id}` : "" };
+      return { type: "success", text: response.message, redirectUrl: mode === "add" && !isModal ? `/${getFrenchSlug("users")}/${response.id}` : "" };
     } catch (error) {
       console.log(error);
       console.log("Signup failed", error);

@@ -40,11 +40,11 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
     try {
       const response = await fetchData(filters);
       if (response) {
-        let updatedPagination = { ...response.pagination };
+        let updatedPagination = { ...response.data?.pagination };
         updatedPagination = setPaginationButtons(updatedPagination);
 
         setPagination(updatedPagination);
-        setItems(response.items);
+        setItems(response.data?.items);
       }
     } catch (error) {
       console.log(error.message);

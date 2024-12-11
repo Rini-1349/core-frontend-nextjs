@@ -6,6 +6,7 @@ import { useForm } from "@/hooks/useForm";
 import { GlobalMessage } from "./Message/GlobalMessage";
 import { formatToogleValueIntoBoolean, updateToggleInputs } from "@/utils/toggleHelpers";
 import { useRouter } from "next/navigation";
+import { useAlert } from "@/context/AlertContext";
 
 // Traduction de la largeur en classes Tailwind
 function defineWidthClass(field) {
@@ -30,8 +31,9 @@ function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
   }
 }
 
-export default function Form({ children, fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {} }) {
+export default function Form({ children, fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {}, onSubmitResponseDisplayType = "alert" }) {
   const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate);
+  const { showAlert } = useAlert();
   const router = useRouter();
 
   // Récupère les toggle pour un traitement spécial
@@ -52,13 +54,21 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, set
       try {
         // Appelle la fonction onSubmit et attend la réponse
         const response = await onSubmit(formDataFromDOM);
-        setGlobalMessage(response); // Met à jour le message global avec le retour de onSubmit
+        if (onSubmitResponseDisplayType === "alert") {
+          showAlert(response); // Affiche une alerte avec le retour de onSubmit
+        } else {
+          setGlobalMessage(response);
+        }
         if (response.redirectUrl) {
           setTimeout(() => router.push(response.redirectUrl), 1000);
         }
       } catch (error) {
         // Gère les erreurs éventuelles
-        setGlobalMessage({ type: "error", text: "Une erreur est survenue lors de la soumission du formulaire." });
+        if (onSubmitResponseDisplayType === "alert") {
+          showAlert({ type: "error", text: "Une erreur est survenue lors de la soumission du formulaire." });
+        } else {
+          setGlobalMessage({ type: "error", text: "Une erreur est survenue lors de la soumission du formulaire." });
+        }
         console.error("Erreur lors de la soumission :", error);
       }
     }

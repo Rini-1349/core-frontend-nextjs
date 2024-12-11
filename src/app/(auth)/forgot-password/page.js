@@ -49,7 +49,7 @@ export default function ForgotPassword() {
     try {
       const response = await forgotPassword({ email: formData.username });
       if (response) {
-        setGlobalMessage({ type: "success", text: "Un email de réinitialisation a été envoyé à votre adresse." });
+        setGlobalMessage({ type: "success", text: response.message });
       }
     } catch (error) {
       console.log("Erreur lors de la demande de réinitialisation", error);

@@ -77,7 +77,7 @@ export default function ResetPassword() {
     try {
       const response = await resetPassword({ password: formData.password }, queryParams);
       if (response) {
-        setGlobalMessage({ type: "success", text: "Mot de passe réinitialisé avec succès." });
+        setGlobalMessage({ type: "success", text: response.message });
         setIsTokenValid(false);
         setTimeout(() => router.push("/"), 2000);
       }

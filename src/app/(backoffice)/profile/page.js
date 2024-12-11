@@ -62,7 +62,7 @@ export default function Profile() {
     try {
       const response = await updateProfile({ data: values });
 
-      return { type: "success", text: "Profil mis à jour" };
+      return { type: "success", text: response.message };
     } catch (error) {
       console.log(error);
       console.log("Profile update failed", error);

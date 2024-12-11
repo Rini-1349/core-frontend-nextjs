@@ -51,8 +51,8 @@ export default function Register() {
     setIsLoading(true); // Activer le loader
 
     try {
-      await register(formData); // Inscription de l'utilisateur
-      setGlobalMessage({ type: "success", text: "Compte créé avec succès. Veuillez valider votre adresse email via le lien qui vous a été envoyé." });
+      const response = await register(formData); // Inscription de l'utilisateur
+      setGlobalMessage({ type: "success", text: response.message });
     } catch (error) {
       console.log(error);
       console.log("Signup failed", error);

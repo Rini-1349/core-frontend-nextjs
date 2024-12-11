@@ -47,7 +47,7 @@ export default function ResendValidationEmail(request) {
     try {
       const response = await resendValidationEmail(user.id);
       if (response) {
-        setGlobalMessage({ type: "success", text: "Email de vérification renvoyé avec succès !" });
+        setGlobalMessage({ type: "success", text: response.message });
       } else {
         console.log("Erreur lors de l'envoi de l'email de vérification");
         setGlobalMessage({ type: "error", text: "Erreur lors de l'envoi de l'email de vérification" });

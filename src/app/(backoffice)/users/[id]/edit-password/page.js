@@ -65,8 +65,7 @@ export default function UserDetails() {
     try {
       let response;
       response = await editUserPassword({ id, data: values });
-
-      return { type: "success", text: "Mot de passe modifié avec succès" };
+      return { type: "success", text: response.message };
     } catch (error) {
       console.log(error);
       console.log("Edit password failed", error);
