@@ -57,6 +57,15 @@ export function getTokenClientSide() {
   return null;
 }
 
+export function hasSessionExpired(session) {
+  const currentTime = Math.floor(Date.now() / 1000);
+  if (session.exp && session.exp < currentTime) {
+    return true;
+  }
+
+  return false;
+}
+
 export function redirectToLogin() {
   if (typeof window !== "undefined") {
     const currentUrl = getEnglishSlug(window.location.pathname);

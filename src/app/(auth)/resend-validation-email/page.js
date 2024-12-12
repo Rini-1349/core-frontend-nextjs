@@ -63,7 +63,7 @@ export default function ResendValidationEmail(request) {
   const handleLogout = () => {
     clearSession(); // Efface le cookie de session
     setUser(null); // Réinitialise l'état de l'utilisateur
-    router.push(getFrenchSlug("login"));
+    router.push(`/${getFrenchSlug("login")}`);
   };
 
   return (

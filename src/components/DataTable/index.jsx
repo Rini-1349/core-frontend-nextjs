@@ -16,6 +16,9 @@ import { addOneItemToagination, definePopupParams, removeOneItemFromPagination, 
 import PopupContainer from "../Popup/PopupContainer";
 import ContentPageHeader from "./ContentPageHeader";
 import { useAlert } from "@/context/AlertContext";
+import { useSession } from "@/context/SessionContext";
+import { hasSessionExpired } from "@/utils/session";
+import { getFrenchSlug } from "@/lib/slugUtils";
 
 const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, paginationLimits, defaultFilters, addAction }) => {
   const [items, setItems] = useState([]);
@@ -26,6 +29,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
   const { showAlert } = useAlert();
   const [addFiltersRow, setAddFiltersRow] = useState(false);
   const router = useRouter();
+  const { session } = useSession();
 
   useEffect(() => {
     const hasFilters = columns.some((col) => col.search);
@@ -85,12 +89,19 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
           const updatedPagination = addOneItemToagination(pagination);
           setPagination(updatedPagination);
         }
-        console.log("Données reçues de l'iframe :", event.data);
-        showAlert({
-          type: "success",
-          text: "Opération effectuée avec succès",
-        });
-        closePopup();
+        if (event.data.showAlert !== false) {
+          showAlert({
+            type: "success",
+            text: "Opération effectuée avec succès",
+          });
+        }
+        if (event.data.closePopupTimeout) {
+          setTimeout(() => closePopup(), event.data.closePopupTimeout);
+        } else {
+          closePopup();
+        }
+      } else if (event.data?.type === "expiredSession") {
+        return router.push(`/${getFrenchSlug("login")}`);
       }
     };
 
@@ -109,6 +120,9 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
 
   // Ouvre le lien dans une autre page ou ouvre la pop-up avec le contenu d'une autre page
   const handleLinkClick = (url, action) => {
+    if (hasSessionExpired(session)) {
+      return router.push(`/${getFrenchSlug("login")}`);
+    }
     if (action.openingType === "popup") {
       const popupParams = definePopupParams(action);
       openPopup(

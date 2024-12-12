@@ -4,9 +4,11 @@ import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
+import { useSession } from "@/context/SessionContext";
 import { useTitle } from "@/context/TitleContext";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { createUser, getUserDetails, updateUser } from "@/services/users";
+import { hasSessionExpired } from "@/utils/session";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
 import { faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useSearchParams } from "next/navigation";
@@ -17,6 +19,7 @@ export default function UserDetails() {
   const params = useParams();
   const id = params.id;
   const searchParams = useSearchParams();
+  const { session } = useSession();
 
   const [user, setUser] = useState(null);
   const [mode, setMode] = useState(id === "new" ? "add" : searchParams.get("mode") === "edit" ? "edit" : "view");
@@ -81,6 +84,12 @@ export default function UserDetails() {
 
   const handleSubmit = async (values) => {
     setIsLoading(true); // Activer le loader
+    if (isModal && hasSessionExpired(session)) {
+      window.parent.postMessage({
+        type: "expiredSession",
+      });
+      return {};
+    }
 
     try {
       let response;
@@ -95,6 +104,8 @@ export default function UserDetails() {
           type: "formSubmissionSuccess",
           data: response,
           mode: mode,
+          showAlert: false,
+          closePopupTimeout: 2000,
         });
       }
       return { type: "success", text: response.message, redirectUrl: mode === "add" && !isModal ? `/${getFrenchSlug("users")}/${response.id}` : "" };
