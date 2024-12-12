@@ -43,7 +43,7 @@ export default function UserDetails() {
         try {
           const response = await getUserDetails(id);
           if (response) {
-            setUser(response);
+            setUser(response.data);
             setTitle(`Modification mot de passe - ${response.lastname} ${response.firstname}`);
           }
         } catch (error) {
