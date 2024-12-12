@@ -62,7 +62,7 @@ export default function UserDetails() {
         try {
           const response = await getUserDetails(id);
           if (response) {
-            setUser(response);
+            setUser(response.data);
           }
         } catch (error) {
           console.log(error.message);

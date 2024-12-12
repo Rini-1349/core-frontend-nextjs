@@ -22,7 +22,7 @@ function defineWidthClass(field) {
 
 function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
   if (field.type === "toggle") {
-    return <Toggle name={field.name} defaultValue={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} />;
+    return <Toggle name={field.name} defaultChecked={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} />;
   } else if (field.icon) {
     return (
       <>
