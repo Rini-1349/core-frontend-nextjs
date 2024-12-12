@@ -1,19 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { login } from "@/services/auth";
 import { setSession } from "@/utils/session";
-import { InputGroup } from "@/components/Form/Input/InputGroup";
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
-import { useForm } from "@/hooks/useForm";
-import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
 import { useEffect } from "react";
 import ClientMeta from "@/components/Metadata/ClientMeta";
+import Form from "@/components/Form";
 
 /**
  * Login page
@@ -22,7 +18,6 @@ import ClientMeta from "@/components/Metadata/ClientMeta";
  * @returns {JSX.Element}
  */
 export default function Login() {
-  const router = useRouter();
   const { setIsLoading } = useIsLoading();
   const { title, setTitle } = useTitle();
 
@@ -30,8 +25,6 @@ export default function Login() {
     setTitle("Connexion");
   });
 
-  // Configuration du formulaire
-  const initialFormState = { username: "", password: "" };
   const validate = (data) => {
     const errors = {};
     if (!data.username) errors.username = "L'adresse email est obligatoire.";
@@ -39,64 +32,51 @@ export default function Login() {
     return errors;
   };
 
-  // Gestion via le hook `useForm`
-  const { formData, fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialFormState, validate);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setGlobalMessage(null);
-
-    if (!validateForm()) return;
-
+  const handleSubmit = async (values) => {
     setIsLoading(true); // Activer le loader
 
     try {
-      const { token } = await login(formData);
+      const { token } = await login(values);
       setSession(token);
-      setGlobalMessage({ type: "success", text: "Connexion réussie. Redirection..." });
-      setTimeout(() => router.push("/"), 1000);
+      return { type: "success", text: "Connexion réussie. Redirection...", redirectUrl: "/" };
     } catch (error) {
       console.log("Login failed", error);
-      setGlobalMessage({ type: "error", text: error.message });
+      return { type: "error", text: error.message };
     } finally {
       setIsLoading(false); // Désactiver le loader
     }
   };
 
   const formFields = [
-    { name: "username", label: "Adresse email", type: "text", required: true },
-    { name: "password", label: "Mot de passe", type: "password", required: true },
+    { name: "username", label: "Adresse email", type: "text", required: true, widthClass: "full" },
+    { name: "password", label: "Mot de passe", type: "password", required: true, widthClass: "full" },
   ];
+  const submitButton = {
+    title: "Connexion",
+    widthClass: "w-full",
+    btnStyle: "primary",
+  };
+  const formStyle = {
+    formDivClassName: "flex flex-col bg-white w-full rounded-md",
+  };
 
   return (
-    <>
+    <div className="px-2">
       <ClientMeta title={title} />
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <AuthHeading1 title="Connexion" />
-
-        <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
-          {formFields.map((field) => (
-            <InputGroup key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
-          ))}
-
-          <GlobalMessage message={globalMessage} />
-
-          <div className="flex items-center justify-between">
-            <Link href={`/${getFrenchSlug("forgot-password")}`} className="text-sm text-blue-600 hover:underline ml-auto">
-              Mot de passe oublié ?
-            </Link>
-          </div>
-
-          <DefaultButton type="submit" title="Connexion" className="" />
-
-          <p className="text-sm text-gray-500 mt-3">
-            Pas encore inscrit ?{" "}
-            <Link href={`/${getFrenchSlug("register")}`} className="text-blue-600 hover:underline">
-              Créer un compte
-            </Link>
-          </p>
+      <AuthHeading1 title="Connexion" className="mb-10" />
+      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} isReadOnly={false} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage">
+        <div className="flex items-center justify-between mb-5">
+          <Link href={`/${getFrenchSlug("forgot-password")}`} className="text-sm text-blue-600 hover:underline ml-auto">
+            Mot de passe oublié ?
+          </Link>
         </div>
-      </form>
-    </>
+      </Form>
+      <p className="text-sm text-gray-500 mt-5 px-2">
+        Pas encore inscrit ?{" "}
+        <Link href={`/${getFrenchSlug("register")}`} className="text-blue-600 hover:underline">
+          Créer un compte
+        </Link>
+      </p>
+    </div>
   );
 }

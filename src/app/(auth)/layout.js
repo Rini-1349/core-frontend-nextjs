@@ -1,6 +1,8 @@
 "use client";
 
 import LayoutContent from "@/components/Loader/LayoutContent";
+import PageAlert from "@/components/PageAlert";
+import { AlertProvider } from "@/context/AlertContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { TitleProvider } from "@/context/TitleContext";
 
@@ -17,9 +19,12 @@ export default function AuthLayout({ children }) {
     <TitleProvider>
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6 sm:p-8">
-          <LoadingProvider>
-            <LayoutContent>{children}</LayoutContent>
-          </LoadingProvider>
+          <AlertProvider>
+            <PageAlert />
+            <LoadingProvider>
+              <LayoutContent>{children}</LayoutContent>
+            </LoadingProvider>
+          </AlertProvider>
         </div>
       </div>
     </TitleProvider>

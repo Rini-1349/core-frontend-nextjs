@@ -2,17 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { register } from "@/services/auth";
-import { InputGroup } from "@/components/Form/Input/InputGroup";
 import Link from "next/link";
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
-import { useForm } from "@/hooks/useForm";
-import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useTitle } from "@/context/TitleContext";
 import { useEffect } from "react";
+import Form from "@/components/Form";
 
 /**
  * Register page
@@ -29,8 +26,6 @@ export default function Register() {
     setTitle("Inscription");
   });
 
-  // Configuration du formulaire
-  const initialFormState = { lastname: "", firstname: "", username: "", password: "", confirmPassword: "" };
   const validate = (data) => {
     const errors = {};
     if (!data.username) errors.username = "L'adresse email est obligatoire.";
@@ -39,59 +34,47 @@ export default function Register() {
     return errors;
   };
 
-  // Gestion via le hook `useForm`
-  const { formData, fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialFormState, validate);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setGlobalMessage(null);
-
-    if (!validateForm()) return;
-
+  const handleSubmit = async (values) => {
     setIsLoading(true); // Activer le loader
 
     try {
-      const response = await register(formData); // Inscription de l'utilisateur
-      setGlobalMessage({ type: "success", text: response.message });
+      const response = await register(values); // Inscription de l'utilisateur
+      return { type: "success", text: response.message };
     } catch (error) {
       console.log(error);
       console.log("Signup failed", error);
-      setGlobalMessage({ type: "error", text: error.message });
+      return { type: "error", text: error.message };
     } finally {
       setIsLoading(false); // Désactiver le loader
     }
   };
 
   const formFields = [
-    { name: "lastname", label: "Nom", type: "text", required: true },
-    { name: "firstname", label: "Prénom", type: "text", required: true },
-    { name: "username", label: "Adresse email", type: "text", required: true },
-    { name: "password", label: "Mot de passe", type: "password", required: true },
-    { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", required: true },
+    { name: "lastname", label: "Nom", type: "text", required: true, widthClass: "full" },
+    { name: "firstname", label: "Prénom", type: "text", required: true, widthClass: "full" },
+    { name: "username", label: "Adresse email", type: "text", required: true, widthClass: "full" },
+    { name: "password", label: "Mot de passe", type: "password", required: true, widthClass: "full" },
+    { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", required: true, widthClass: "full" },
   ];
+  const submitButton = {
+    title: "Créer un compte",
+    widthClass: "w-full",
+    btnStyle: "primary",
+  };
+  const formStyle = {
+    formDivClassName: "flex flex-col bg-white w-full rounded-md",
+  };
 
   return (
-    <>
+    <div className="px-2">
       <ClientMeta title={title} />
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <AuthHeading1 title="Créer un compte" />
-        <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
-          {formFields.map((field) => (
-            <InputGroup key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
-          ))}
-
-          {/* Messages globaux */}
-          <GlobalMessage message={globalMessage} />
-
-          <DefaultButton type="submit" title="Créer un compte" className="mx-auto px-6" />
-
-          <p className="text-sm text-gray-500 mt-3">
-            <Link href={`/${getFrenchSlug("login")}`} className="text-blue-700 hover:underline dark:text-blue-500">
-              Retour à la page de connexion
-            </Link>
-          </p>
-        </div>
-      </form>
-    </>
+      <AuthHeading1 title="Créer un compte" className="mb-10" />
+      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} isReadOnly={false} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
+      <p className="text-sm text-gray-500 mt-5 px-2">
+        <Link href={`/${getFrenchSlug("login")}`} className="text-blue-700 hover:underline dark:text-blue-500">
+          Retour à la page de connexion
+        </Link>
+      </p>
+    </div>
   );
 }

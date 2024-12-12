@@ -3,17 +3,14 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { resetPassword } from "@/services/auth";
-import { useRouter } from "next/navigation";
-import { InputGroup } from "@/components/Form/Input/InputGroup";
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import Link from "next/link";
 import { AuthHeading1 } from "@/components/Heading/AuthHeading1";
 import { GlobalMessage } from "@/components/Form/Message/GlobalMessage";
-import { useForm } from "@/hooks/useForm";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { useIsLoading } from "@/context/LoadingContext";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useTitle } from "@/context/TitleContext";
+import Form from "@/components/Form";
 
 /**
  * ResetPassword page
@@ -22,7 +19,6 @@ import { useTitle } from "@/context/TitleContext";
  * @returns {JSX.Element}
  */
 export default function ResetPassword() {
-  const router = useRouter();
   const { setIsLoading } = useIsLoading();
   const [isTokenValid, setIsTokenValid] = useState(false);
   const searchParams = useSearchParams();
@@ -33,8 +29,6 @@ export default function ResetPassword() {
     setTitle("Réinitialisation mot de passe");
   });
 
-  // Configuration du formulaire
-  const initialFormState = { password: "", confirmPassword: "" };
   const validate = (data) => {
     const errors = {};
     if (data.password !== data.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas.";
@@ -42,7 +36,7 @@ export default function ResetPassword() {
   };
 
   // Gestion via le hook `useForm`
-  const { formData, fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialFormState, validate);
+  const [globalMessage, setGlobalMessage] = useState(null);
 
   // Vérification du token au chargement
   useEffect(() => {
@@ -66,66 +60,53 @@ export default function ResetPassword() {
   }, [queryParams]);
 
   // Gestion de la réinitialisation
-  const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    setGlobalMessage(null);
-
-    if (!validateForm()) return;
-
+  const handlePasswordReset = async (values) => {
     setIsLoading(true); // Activer le loader
 
     try {
-      const response = await resetPassword({ password: formData.password }, queryParams);
+      const response = await resetPassword({ password: values.password }, queryParams);
       if (response) {
-        setGlobalMessage({ type: "success", text: response.message });
-        setIsTokenValid(false);
-        setTimeout(() => router.push("/"), 2000);
+        return { type: "success", text: `${response.message} Redirection...`, redirectUrl: "/", redirectTimeout: 3000 };
       }
     } catch (error) {
       console.error(error.message);
-      setGlobalMessage({ type: "error", text: error.message });
+      return { type: "error", text: error.message };
     } finally {
       setIsLoading(false); // Désactiver le loader
     }
   };
 
   const formFields = [
-    { name: "password", label: "Mot de passe", type: "password", required: true },
-    { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", required: true },
+    { name: "password", label: "Mot de passe", type: "password", required: true, widthClass: "full" },
+    { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", required: true, widthClass: "full" },
   ];
+  const submitButton = {
+    title: "Réinitialiser le mot de passe",
+    widthClass: "w-full",
+    btnStyle: "primary",
+  };
+  const formStyle = {
+    formDivClassName: "flex flex-col bg-white w-full rounded-md",
+  };
 
   return (
-    <>
+    <div className="px-2">
       <ClientMeta title={title} />
-      <div>
-        <AuthHeading1 title="Réinitialisation mot de passe" />
-
-        {isTokenValid ? (
-          <form onSubmit={handlePasswordReset}>
-            <div className="flex flex-col bg-white w-full sm:p-10 gap-5 rounded-md">
-              {formFields.map((field) => (
-                <InputGroup key={field.name} name={field.name} label={field.label} type={field.type} value={formData[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />
-              ))}
-
-              {/* Messages globaux */}
-              <GlobalMessage message={globalMessage} />
-
-              <DefaultButton type="submit" title="Réinitialiser le mot de passe" />
-            </div>
-          </form>
-        ) : (
-          <div className="text-sm text-gray-500 mt-3">
-            <GlobalMessage message={globalMessage} />
-            {globalMessage && globalMessage.type === "error" ? (
-              <Link href={`/${getFrenchSlug("forgot-password")}`} className="text-blue-600 hover:underline">
-                Générer un nouveau lien
-              </Link>
-            ) : (
-              ""
-            )}
-          </div>
-        )}
-      </div>
-    </>
+      <AuthHeading1 title="Réinitialisation mot de passe" className="mb-10" />
+      {isTokenValid ? (
+        <Form fields={formFields} item={{}} validate={validate} onSubmit={handlePasswordReset} isReadOnly={false} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
+      ) : (
+        <div className="text-sm text-gray-500 mt-3">
+          <GlobalMessage message={globalMessage} />
+          {globalMessage && globalMessage.type === "error" ? (
+            <Link href={`/${getFrenchSlug("forgot-password")}`} className="text-blue-600 hover:underline">
+              Générer un nouveau lien
+            </Link>
+          ) : (
+            ""
+          )}
+        </div>
+      )}
+    </div>
   );
 }

@@ -7,6 +7,7 @@ import { GlobalMessage } from "./Message/GlobalMessage";
 import { formatToogleValueIntoBoolean, updateToggleInputs } from "@/utils/toggleHelpers";
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
+import { InputGroup } from "./Input/InputGroup";
 
 // Traduction de la largeur en classes Tailwind
 function defineWidthClass(field) {
@@ -22,16 +23,18 @@ function defineWidthClass(field) {
 function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
   if (field.type === "toggle") {
     return <Toggle name={field.name} defaultValue={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} />;
-  } else {
+  } else if (field.icon) {
     return (
       <>
         <InputWithAddons icon={field.icon} type={field.type} name={field.name} placeholder={field.label} defaultValue={item[field.name] || ""} disabled={isReadOnly} className={field.className} label={field.label} title={field.label} errorMessage={fieldErrors[field.name]} onChange={handleChange} />
       </>
     );
+  } else {
+    return <InputGroup name={field.name} label={field.label} type={field.type} value={item[field.name]} onChange={handleChange} errorMessage={fieldErrors[field.name]} required={field.required} />;
   }
 }
 
-export default function Form({ children, fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {}, onSubmitResponseDisplayType = "alert" }) {
+export default function Form({ children, fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {}, onSubmitResponseDisplayType = "alert", submitButton, formStyle }) {
   const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate);
   const { showAlert } = useAlert();
   const router = useRouter();
@@ -60,7 +63,7 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, set
           setGlobalMessage(response);
         }
         if (response.redirectUrl) {
-          setTimeout(() => router.push(response.redirectUrl), 1000);
+          setTimeout(() => router.push(response.redirectUrl), response.redirectTimeout || 1000);
         }
       } catch (error) {
         // Gère les erreurs éventuelles
@@ -91,8 +94,8 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, set
           />
         </div>
       )}
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-wrap -mx-2">
+      <form className={formStyle?.formClassName || ""} onSubmit={handleSubmit}>
+        <div className={formStyle?.formDivClassName || "flex flex-wrap -mx-2"}>
           {fields.map((field) => {
             const widthClass = defineWidthClass(field);
             const elements = [
@@ -107,7 +110,7 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, set
           <div className="px-2">{children}</div>
         </div>
         <div className="flex justify-center">{globalMessage && <GlobalMessage message={globalMessage} />}</div>
-        <div className="mt-4 flex justify-center gap-2">{!isReadOnly && <DefaultButton type="submit" title="Enregistrer" widthClass="" btnStyle="success" />}</div>
+        <div className="mt-4 flex justify-center gap-2 px-2">{!isReadOnly && <DefaultButton type="submit" title={submitButton?.title || "Enregistrer"} widthClass={submitButton?.widthClass || ""} btnStyle={submitButton?.btnStyle || "success"} />}</div>
       </form>
     </>
   );
