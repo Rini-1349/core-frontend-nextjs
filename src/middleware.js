@@ -40,16 +40,21 @@ export async function middleware(req) {
   // Si non connecté et page non autorisée
   if (!isAuthorizedPage && !token) {
     console.log(`[Middleware] Unauthorized access to ${req.nextUrl.pathname}`);
-    return NextResponse.redirect(new URL(`/${getFrenchSlug("login")}`, req.url));
+    return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
   }
 
   if (token) {
-    const session = getSession(token);
-    if (!session || !session.is_verified) {
-      console.log(`[Middleware] Session unverified, redirecting to validation`);
-      return NextResponse.redirect(new URL("/resend-validation-email", req.url));
-    } else if (hasSessionExpired(session)) {
-      return NextResponse.redirect(new URL(`/${getFrenchSlug("login")}`, req.url));
+    try {
+      const session = await getSession(token);
+      if (!session || !session.is_verified) {
+        console.log(`[Middleware] Session unverified, redirecting to validation`);
+        return NextResponse.redirect(new URL(getFrenchSlug("/resend-validation-email"), req.url));
+      } else if (hasSessionExpired(session)) {
+        return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
+      }
+    } catch (error) {
+      console.error("[Middleware] Error in session handling:", error);
+      return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
     }
   }
 

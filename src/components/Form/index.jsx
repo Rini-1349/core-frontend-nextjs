@@ -26,7 +26,7 @@ function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
   } else if (field.icon) {
     return (
       <>
-        <InputWithAddons icon={field.icon} type={field.type} name={field.name} placeholder={field.label} defaultValue={item[field.name] || ""} disabled={isReadOnly} className={field.className} label={field.label} title={field.label} errorMessage={fieldErrors[field.name]} onChange={handleChange} />
+        <InputWithAddons icon={field.icon} type={field.type} name={field.name} placeholder={field.label} defaultValue={item[field.name] || ""} disabled={isReadOnly} className={field.className} label={field.label} title={field.label} errorMessage={fieldErrors[field.name]} onChange={handleChange} maxLength={field.maxLength} minLength={field.minLength} />
       </>
     );
   } else {

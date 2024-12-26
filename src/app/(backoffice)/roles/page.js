@@ -5,33 +5,20 @@ import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
 import { getFrenchSlug } from "@/lib/slugUtils";
-import { deleteUser, getUsersList } from "@/services/users";
-import { faTrashCan, faPenToSquare, faEye } from "@fortawesome/free-solid-svg-icons";
+import { getRolesList } from "@/services/roles";
+import { faPenToSquare, faEye, faKey } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 
 const columns = [
-  { label: "Nom", key: "lastname", sortable: true, search: "input" },
-  { label: "Prénom", key: "firstname", sortable: true, search: "input" },
-  { label: "Email", key: "email", sortable: true, search: "input" },
-  {
-    label: "Vérifié",
-    key: "is_verified",
-    search: "select",
-    selectData: { all: "Tout", 0: "Non", 1: "Oui" },
-    boolean: {
-      true: "Oui",
-      false: "Non",
-    },
-  },
+  { label: "Rôle", key: "description", sortable: true },
   {
     label: "Actions",
     key: "id",
-    search: "clearFilters",
     actions: [
       {
         key: "view",
         label: "Voir",
-        href: `/${getFrenchSlug("users")}/[id]?mode=view`,
+        href: `/${getFrenchSlug("roles")}/[id]?mode=view`,
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -50,7 +37,7 @@ const columns = [
       {
         key: "edit",
         label: "Modifier",
-        href: `/${getFrenchSlug("users")}/[id]?mode=edit`,
+        href: `/${getFrenchSlug("roles")}/[id]?mode=edit`,
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -67,19 +54,15 @@ const columns = [
         ],
       },
       {
-        key: "delete",
-        label: "Supprimer",
-        bgColor: "red",
-        icon: faTrashCan,
-        itemDescription: 'l\'utilisateur "[firstname] [lastname]"',
+        key: "editRolePermissions",
+        label: "Permissions",
+        href: `/${getFrenchSlug("roles")}/[id]/permissions`,
+        bgColor: "pink",
+        icon: faKey,
         replacePatterns: [
           {
-            pattern: /\[firstname\]/,
-            field: "firstname",
-          },
-          {
-            pattern: /\[lastname\]/,
-            field: "lastname",
+            pattern: /\[id\]/,
+            field: "id",
           },
         ],
       },
@@ -88,22 +71,17 @@ const columns = [
 ];
 const paginationLimits = [10, 25, 50];
 const defaultFilters = {
-  search: "",
-  lastname: "",
-  firstname: "",
-  email: "",
   orderBy: "id",
   orderDir: "asc",
-  is_verified: "all",
   page: 1,
   limit: 25,
 };
 
 const addAction = {
   key: "add",
-  label: "Ajouter utilisateur",
+  label: "Ajouter rôle",
   bgColor: "red",
-  href: `/${getFrenchSlug("users/new")}`,
+  href: `/${getFrenchSlug("roles/new")}`,
   openingType: "popup",
   popupModalStyle: {
     top: "15%",
@@ -112,19 +90,19 @@ const addAction = {
   childDivMaxWidthClass: "max-w-3xl",
 };
 
-export default function UsersList() {
+export default function RolesList() {
   const { isLoading, setIsLoading } = useIsLoading();
   const { title, setTitle } = useTitle();
 
   useEffect(() => {
-    setTitle("Utilisateurs");
+    setTitle("Rôles");
   });
 
   return (
     <>
-      <ClientMeta title={title} description="Liste des utilisateurs" />
+      <ClientMeta title={title} description="Liste des rôles" />
       <div>
-        <DataTable columns={columns} fetchData={getUsersList} deleteItem={deleteUser} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} addAction={addAction} />
+        <DataTable columns={columns} fetchData={getRolesList} setIsLoading={setIsLoading} isLoading={isLoading} paginationLimits={paginationLimits} defaultFilters={defaultFilters} addAction={addAction} />
       </div>
     </>
   );

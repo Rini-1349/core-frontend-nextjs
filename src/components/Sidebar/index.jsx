@@ -23,7 +23,7 @@ const menuGroups = [
         route: "#",
         children: [
           { label: "Utilisateurs", route: `/${getFrenchSlug("users")}`, icon: faUsersGear },
-          { label: "Rôles", route: "/users", icon: faKey },
+          { label: "Rôles", route: `${getFrenchSlug("/roles")}`, icon: faKey },
         ],
       },
     ],

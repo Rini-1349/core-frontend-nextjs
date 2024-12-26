@@ -12,7 +12,7 @@ const ContentPageHeader = ({ action, onLinkClick }) => {
     <div className="flex">
       <DefaultButton
         type="button"
-        title="Ajouter utilisateur"
+        title={action.label}
         onClick={() => {
           onLinkClick(action.href, action);
         }}
