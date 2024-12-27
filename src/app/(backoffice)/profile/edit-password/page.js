@@ -10,7 +10,7 @@ import { editProfilePassword } from "@/services/users";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
-export default function UserDetails() {
+export default function EditProfilePassword() {
   const { isLoading, setIsLoading } = useIsLoading();
 
   const [formFields, setFormFields] = useState([

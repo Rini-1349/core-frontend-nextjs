@@ -49,7 +49,7 @@ export async function getRoleDetails(id) {
  * @returns {Axios}
  */
 export async function createRole(data) {
-  return apiFetch("/roles", {
+  return apiFetch("roles", {
     headers: {
       Authorization: `Bearer ${BEARER_TOKEN}`,
     },
@@ -73,6 +73,40 @@ export async function updateRole({ id, data }) {
       Authorization: `Bearer ${BEARER_TOKEN}`,
     },
     method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * getRolePermissions function
+ *
+ * @export
+ * @async
+ * @param {number} id
+ * @returns {Axios}
+ */
+export async function getRolePermissions(id) {
+  return apiFetch(`roles/${id}/permissions`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
+  });
+}
+
+/**
+ * updateRolePermissions function
+ *
+ * @export
+ * @async
+ * @param {{}} data
+ * @returns {Axios}
+ */
+export async function updateRolePermissions({ id, data }) {
+  return apiFetch(`roles/${id}/permissions`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
+    method: "POST",
     body: JSON.stringify(data),
   });
 }
