@@ -31,17 +31,19 @@ function PageAlert() {
 
   return (
     alertMessage && (
-      <div className={`absolute top-0 left-0 right-0 p-4 mb-4 text-sm text-${color}-800 rounded-lg bg-${color}-100`} role="alert">
-        <div className="flex justify-between items-center">
-          <div className="m-auto">
-            <span className="font-medium">{alertMessage.heading}</span> {alertMessage.text}
+      <div className={`sticky top-0 left-0 right-0`}>
+        <div className={`absolute top-0 left-0 right-0 p-4 -mx-4 -translate-y-4 text-sm text-${color}-800 rounded-lg bg-${color}-100`} role="alert">
+          <div className="flex justify-between items-center">
+            <div className="m-auto">
+              <span className="font-medium">{alertMessage.heading}</span> {alertMessage.text}
+            </div>
+            <button
+              className="ml-2 text-${color}-800"
+              onClick={hideAlert} // Bouton pour fermer l'alerte manuellement
+            >
+              &times;
+            </button>
           </div>
-          <button
-            className="ml-2 text-${color}-800"
-            onClick={hideAlert} // Bouton pour fermer l'alerte manuellement
-          >
-            &times;
-          </button>
         </div>
       </div>
     )
