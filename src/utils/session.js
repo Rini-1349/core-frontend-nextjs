@@ -1,3 +1,4 @@
+import { allowedUrls } from "@/lib/allowedUrls";
 import { getEnglishSlug, getFrenchSlug } from "@/lib/slugUtils";
 import { jwtDecode } from "jwt-decode";
 
@@ -69,7 +70,7 @@ export function hasSessionExpired(session) {
 export function redirectToLogin() {
   if (typeof window !== "undefined") {
     const currentUrl = getEnglishSlug(window.location.pathname);
-    const excludedUrls = ["/login", "/register", "/reset-password", "/forgot-password", "/verify-email", "/resend-validation-email"]; // Liste des URL à exclure
+    const excludedUrls = allowedUrls["unloggedUsers"]; // Liste des URL à exclure
 
     // Si l'URL actuelle fait partie des exclusions, on ignore la redirection
     if (excludedUrls.some((url) => currentUrl.includes(url))) {

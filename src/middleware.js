@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession, hasSessionExpired } from "./utils/session";
 import { getEnglishSlug, getFrenchSlug, isFrenchSlugValid } from "@/lib/slugUtils";
+import { matchAuthorizedRoutes, matchPathname } from "./utils/routesHelper";
+import { allowedUrls } from "./lib/allowedUrls";
 
 /**
  * Asynchronious Middleware
@@ -11,37 +13,25 @@ import { getEnglishSlug, getFrenchSlug, isFrenchSlugValid } from "@/lib/slugUtil
  * @returns {NextResponse}
  */
 export async function middleware(req) {
-  /* Gestion des URLs */
   const url = req.nextUrl.clone();
-  const frenchSlug = url.pathname.substring(1); // Extrait le slug sans "/"
-
-  // Vérifie si le slug en français existe dans le mapping
-  if (isFrenchSlugValid(frenchSlug)) {
-    const englishSlug = getEnglishSlug(frenchSlug);
-    console.log(`[Middleware] Rewriting ${frenchSlug} to ${englishSlug}`);
-    url.pathname = `/${englishSlug}`;
-    return NextResponse.rewrite(url); // Réécrit l'URL pour servir la bonne page
-  }
-
-  /* Gestion des autorisations */
+  let pathname = req.nextUrl.pathname;
   const cookies = req.cookies; // Accède aux cookies du middleware
   const token = cookies.get("token")?.value ?? null; // Récupère le token de manière asynchrone
-  const allowedUrls = ["/verify-email", "/resend-validation-email"];
 
-  // Pages accessibles sans token
-  if (!token) {
-    ["/login", "/register", "/reset-password", "/forgot-password"].forEach((url) => {
-      allowedUrls.push(url);
-    });
+  // Transforme le frenchSlug en englishSlug pour vérifier les autorisations et permissions
+  const frenchSlug = url.pathname.substring(1);
+  if (isFrenchSlugValid(frenchSlug)) {
+    pathname = `/${getEnglishSlug(frenchSlug)}`;
   }
 
-  const isAuthorizedPage = allowedUrls.some((url) => req.nextUrl.pathname.startsWith(url));
-
-  // Si non connecté et page non autorisée
-  if (!isAuthorizedPage && !token) {
-    console.log(`[Middleware] Unauthorized access to ${req.nextUrl.pathname}`);
-    return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
+  // Pages autorisées quelles que soient les permissions de l'utilisateur
+  let userAllowedRoutes = {};
+  if (token) {
+    userAllowedRoutes = allowedUrls["loggedUsers"];
+  } else {
+    userAllowedRoutes = allowedUrls["unloggedUsers"];
   }
+  const isRouteAllowed = matchPathname(pathname, userAllowedRoutes);
 
   if (token) {
     try {
@@ -49,13 +39,35 @@ export async function middleware(req) {
       if (!session || !session.is_verified) {
         console.log(`[Middleware] Session unverified, redirecting to validation`);
         return NextResponse.redirect(new URL(getFrenchSlug("/resend-validation-email"), req.url));
-      } else if (hasSessionExpired(session)) {
+      }
+      if (hasSessionExpired(session)) {
         return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
+      }
+
+      // Toutes les routes sont autorisées pour le ROLE_SUPERADMIN
+      const isRouteAuthorized = session.roles.includes("ROLE_SUPERADMIN") ? true : matchAuthorizedRoutes(pathname, session.permissions);
+      // Vérifie les autorisations et permissions de l'utilisateur
+      if (!isRouteAllowed && !isRouteAuthorized) {
+        console.log(`[Middleware] Unauthorized access to ${pathname}`);
+        return NextResponse.redirect(new URL("/403", req.url)); // Page d'erreur 403
       }
     } catch (error) {
       console.error("[Middleware] Error in session handling:", error);
       return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
     }
+  } else {
+    // Si non connecté et page non autorisée
+    if (!isRouteAllowed) {
+      console.log(`[Middleware] Unauthorized access to ${req.nextUrl.pathname}`);
+      return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
+    }
+  }
+
+  /* Gestion des URLs françaises */
+  if (isFrenchSlugValid(frenchSlug)) {
+    const englishSlug = getEnglishSlug(frenchSlug);
+    url.pathname = `/${englishSlug}`;
+    return NextResponse.rewrite(url);
   }
 
   return NextResponse.next(); // Poursuit normalement si aucune condition bloquante
