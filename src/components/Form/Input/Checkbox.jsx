@@ -18,7 +18,7 @@ export const Checkbox = ({ name, defaultChecked, className = "", disabled = fals
   // Fonction de gestion du changement d'état
   const handleChange = (e) => {
     const newValue = e.target.checked ? 1 : 0;
-    onChange({ target: { name, value: newValue } }); // Formate l'événement pour être compatible avec handleChange
+    onChange({ target: { name: e.target.name, value: newValue, checked: newValue } }); // Formate l'événement pour être compatible avec handleChange
   };
 
   return (

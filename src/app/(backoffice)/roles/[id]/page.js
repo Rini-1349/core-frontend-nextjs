@@ -122,20 +122,7 @@ export default function RoleDetails() {
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
         </div>
       )}
-      <Form fields={formFields} item={role} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode}>
-        {mode === "edit" && !isModal && (
-          <div className="flex">
-            <DefaultButton
-              type="button"
-              title="Modifier permissions"
-              onClick={() => {
-                window.location.href = `/${getFrenchSlug("roles/")}/${role.id}/${getFrenchSlug("permissions")}`;
-              }}
-              btnStyle="warning"
-            />
-          </div>
-        )}
-      </Form>
+      <Form fields={formFields} item={role} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} />
     </div>
   );
 }

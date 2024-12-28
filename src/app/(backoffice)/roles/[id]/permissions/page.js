@@ -12,6 +12,7 @@ import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useAlert } from "@/context/AlertContext";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
+import { getFrenchSlug } from "@/lib/slugUtils";
 import { getRolePermissions, updateRolePermissions } from "@/services/roles";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -81,6 +82,17 @@ export default function Permissions() {
 
   if (!role || !permissions) return <div></div>;
 
+  const handleToggleColumn = (columnNumber, isChecked) => {
+    const rows = document.querySelectorAll("table tbody tr"); // Sélectionne toutes les lignes du tableau dans le tbody
+    console.log(isChecked);
+    rows.forEach((row) => {
+      const checkbox = row.querySelector(`td:nth-child(${columnNumber}) input[type="checkbox"]`); // Cible la cellule correspondante et trouve l'input
+      if (checkbox) {
+        checkbox.checked = isChecked; // Modifie l'état de la checkbox
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -112,27 +124,56 @@ export default function Permissions() {
   return (
     <div className="flex flex-col">
       <ClientMeta title={title} />
+      <div className="flex">
+        <DefaultButton
+          type="button"
+          title="< Retour à la liste des rôles"
+          onClick={() => {
+            window.location.href = `/${getFrenchSlug("roles")}`;
+          }}
+          btnStyle="primary"
+          widthClass=""
+          className="text-xs mb-5"
+        />
+      </div>
       <div className="table-container">
         <form onSubmit={handleSubmit}>
           <div className="table-wrapper">
             <table className="table divide-y divide-gray-200">
               <TableHead>
                 <tr>
-                  <TableHeadTh>
+                  <TableHeadTh className="pb-1 px-4 p4-4 text-left text-xs font-medium text-gray-500 uppercase">
                     <TableHeadThContent thType="label" col={{ label: "Fonctionnalité" }} />
                   </TableHeadTh>
                   {rolePermissionsMode === "read-write" ? (
                     <>
-                      <TableHeadTh>
+                      <TableHeadTh className="pb-1 px-4 p4-4 text-left text-xs font-medium text-gray-500 uppercase">
                         <TableHeadThContent thType="label" col={{ label: "Lecture" }} />
                       </TableHeadTh>
-                      <TableHeadTh>
+                      <TableHeadTh className="pb-1 px-4 p4-4 text-left text-xs font-medium text-gray-500 uppercase">
                         <TableHeadThContent thType="label" col={{ label: "Écriture" }} />
                       </TableHeadTh>
                     </>
                   ) : (
-                    <TableHeadTh>
+                    <TableHeadTh className="pb-1 px-4 p4-4 text-left text-xs font-medium text-gray-500 uppercase">
                       <TableHeadThContent thType="label" col={{ label: "Droit d'accès" }} />
+                    </TableHeadTh>
+                  )}
+                </tr>
+                <tr>
+                  <TableHeadTh className="pt-1 px-4 pb-4 text-left text-xs font-medium text-gray-500">(Tout cocher/décocher)</TableHeadTh>
+                  {rolePermissionsMode === "read-write" ? (
+                    <>
+                      <TableHeadTh className="pt-1 px-4 pb-4 text-left text-xs font-medium text-gray-500 uppercase">
+                        <Checkbox onChange={(e) => handleToggleColumn(2, e.target.checked)} label="" />
+                      </TableHeadTh>
+                      <TableHeadTh className="pt-1 px-4 pb-4 text-left text-xs font-medium text-gray-500 uppercase">
+                        <Checkbox onChange={(e) => handleToggleColumn(3, e.target.checked)} label="" />
+                      </TableHeadTh>
+                    </>
+                  ) : (
+                    <TableHeadTh className="pt-1 px-4 pb-4 text-left text-xs font-medium text-gray-500 uppercase">
+                      <Checkbox onChange={(e) => handleToggleColumn(2, e.target.checked)} label="" />
                     </TableHeadTh>
                   )}
                 </tr>
