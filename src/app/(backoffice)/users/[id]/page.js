@@ -2,12 +2,14 @@
 
 import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
+import ModalHeading from "@/components/Heading/ModalHeading";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useSession } from "@/context/SessionContext";
 import { useTitle } from "@/context/TitleContext";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { createUser, getUserDetails, updateUser } from "@/services/users";
+import { isAuthorizedRoute } from "@/utils/routesHelper";
 import { hasSessionExpired } from "@/utils/session";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
 import { faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -121,19 +123,15 @@ export default function UserDetails() {
   return (
     <div>
       <ClientMeta title={title} />
-      {isModal && (
-        <div className="flex justify-center items-center pb-3 mb-3 border-b border-gray-300 dark:border-gray-600">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
-        </div>
-      )}
+      <ModalHeading title={title} isModal={isModal} />
       <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode}>
-        {mode === "edit" && !isModal && (
+        {mode === "edit" && isAuthorizedRoute({ pathname: `/users/${user.id}/edit-password` }, session) && (
           <div className="flex">
             <DefaultButton
               type="button"
               title="Modifier mot de passe"
               onClick={() => {
-                window.location.href = `/${getFrenchSlug("users/")}/${user.id}/${getFrenchSlug("edit-password/")}`;
+                window.location.href = getFrenchSlug(`/users/${user.id}/edit-password${isModal ? "?modal=true" : ""}`);
               }}
               btnStyle="warning"
             />

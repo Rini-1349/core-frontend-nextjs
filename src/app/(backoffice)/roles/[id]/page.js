@@ -1,7 +1,7 @@
 "use client";
 
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
+import ModalHeading from "@/components/Heading/ModalHeading";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useSession } from "@/context/SessionContext";
@@ -14,7 +14,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function RoleDetails() {
-  const { isLoading, setIsLoading } = useIsLoading();
+  const { setIsLoading } = useIsLoading();
   const params = useParams();
   const id = params.id;
   const searchParams = useSearchParams();
@@ -117,11 +117,7 @@ export default function RoleDetails() {
   return (
     <div>
       <ClientMeta title={title} />
-      {isModal && (
-        <div className="flex justify-center items-center pb-3 mb-3 border-b border-gray-300 dark:border-gray-600">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
-        </div>
-      )}
+      <ModalHeading title={title} isModal={isModal} />
       <Form fields={formFields} item={role} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} />
     </div>
   );

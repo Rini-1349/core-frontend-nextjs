@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { matchAuthorizedRoutes, matchPathname } from "@/utils/routesHelper";
+import { isAuthorizedRoute, matchPathname } from "@/utils/routesHelper";
 import { getEnglishSlug, getFrenchSlug } from "@/lib/slugUtils";
-import { isUserSuperadmin } from "@/utils/session";
 
 /**
  * SidebarDropdown component
@@ -19,7 +18,7 @@ const SidebarDropdown = ({ item, session }) => {
     <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
       {session &&
         item
-          .filter((item) => (isUserSuperadmin(session) ? true : matchAuthorizedRoutes(item.route, session.permissions)))
+          .filter((item) => isAuthorizedRoute({ pathname: item.route }, session))
           .map((item, index) => {
             const isActive = matchPathname(pathname, item.isActiveRoutes);
             return (

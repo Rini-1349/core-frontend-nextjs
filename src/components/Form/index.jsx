@@ -79,21 +79,6 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, set
 
   return (
     <>
-      {isReadOnly && (
-        <div className="flex mb-4">
-          <DefaultButton
-            type="button"
-            title="Modifier"
-            onClick={(e) => {
-              e.preventDefault();
-              setMode("edit");
-            }}
-            btnStyle="warning"
-            widthClass=""
-            className="ml-auto"
-          />
-        </div>
-      )}
       <form className={formStyle?.formClassName || ""} onSubmit={handleSubmit}>
         <div className={formStyle?.formDivClassName || "flex flex-wrap -mx-2"}>
           {fields.map((field) => {

@@ -1,4 +1,5 @@
 import { routesPermissions } from "@/lib/routesPermissions";
+import { isUserSuperadmin } from "./session";
 
 /**
  * Vérifie si une route est autorisée pour l'utilisateur
@@ -36,4 +37,23 @@ export function matchPathname(pathname, urlsList) {
     }
     return false; // Par défaut, aucune correspondance
   });
+}
+
+export function isAuthorizedRoute({ pathname, key }, session) {
+  // Toutes les routes sont autorisées pour le ROLE_SUPERADMIN
+  if (isUserSuperadmin(session)) return true;
+
+  if (pathname) {
+    return matchAuthorizedRoutes(pathname, session.permissions);
+  }
+  if (key) {
+    return Object.keys(session.permissions).some((permissionsKey) => {
+      const actions = session.permissions[permissionsKey];
+      return actions.some((action) => {
+        return key === action;
+      });
+    });
+  }
+
+  return false;
 }

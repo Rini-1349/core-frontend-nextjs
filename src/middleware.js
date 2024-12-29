@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSession, hasSessionExpired, isUserSuperadmin } from "./utils/session";
+import { getSession, hasSessionExpired } from "./utils/session";
 import { getEnglishSlug, getFrenchSlug, isFrenchSlugValid } from "@/lib/slugUtils";
-import { matchAuthorizedRoutes, matchPathname } from "./utils/routesHelper";
+import { isAuthorizedRoute, matchPathname } from "./utils/routesHelper";
 import { allowedUrls } from "./lib/allowedUrls";
 
 /**
@@ -46,10 +46,8 @@ export async function middleware(req) {
         return response;
       }
 
-      // Toutes les routes sont autorisées pour le ROLE_SUPERADMIN
-      const isRouteAuthorized = isUserSuperadmin(session) ? true : matchAuthorizedRoutes(pathname, session.permissions);
       // Vérifie les autorisations et permissions de l'utilisateur
-      if (!isRouteAllowed && !isRouteAuthorized) {
+      if (!isRouteAllowed && !isAuthorizedRoute({ pathname: pathname }, session)) {
         console.log(`[Middleware] Unauthorized access to ${pathname}`);
         return NextResponse.redirect(new URL("/403", req.url)); // Page d'erreur 403
       }

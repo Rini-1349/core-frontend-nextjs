@@ -124,18 +124,6 @@ export default function Permissions() {
   return (
     <div className="flex flex-col">
       <ClientMeta title={title} />
-      <div className="flex">
-        <DefaultButton
-          type="button"
-          title="< Retour à la liste des rôles"
-          onClick={() => {
-            window.location.href = `/${getFrenchSlug("roles")}`;
-          }}
-          btnStyle="primary"
-          widthClass=""
-          className="text-xs mb-5"
-        />
-      </div>
       <div className="table-container">
         <form onSubmit={handleSubmit}>
           <div className="table-wrapper">

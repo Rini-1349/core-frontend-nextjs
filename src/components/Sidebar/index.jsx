@@ -6,9 +6,8 @@ import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { faKey, faUsers, faUsersGear, faXmarksLines } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { matchAuthorizedRoutes } from "@/utils/routesHelper";
+import { isAuthorizedRoute } from "@/utils/routesHelper";
 import { useSession } from "@/context/SessionContext";
-import { isUserSuperadmin } from "@/utils/session";
 import { routesGroups } from "@/lib/routesPermissions";
 
 /**
@@ -72,12 +71,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
                   <ul className="mb-6 flex flex-col gap-1.5">
                     {group.menuItems
-                      .filter((menuItem) =>
-                        isUserSuperadmin(session)
-                          ? true
-                          : // Vérifie qu'il y a au moins une route "enfant" autorisée
-                            menuItem.children.some((child) => matchAuthorizedRoutes(child.route, session.permissions))
-                      )
+                      .filter((menuItem) => menuItem.children.some((child) => isAuthorizedRoute({ pathname: child.route }, session)))
                       .map((menuItem, menuIndex) => (
                         <SidebarItem key={menuIndex} item={menuItem} pageName={pageName} setPageName={setPageName} session={session} />
                       ))}

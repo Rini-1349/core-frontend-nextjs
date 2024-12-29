@@ -101,7 +101,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
           closePopup();
         }
       } else if (event.data?.type === "expiredSession") {
-        return router.push(`/${getFrenchSlug("login")}`);
+        return router.push(getFrenchSlug("/login"));
       }
     };
 
@@ -121,7 +121,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
   // Ouvre le lien dans une autre page ou ouvre la pop-up avec le contenu d'une autre page
   const handleLinkClick = (url, action) => {
     if (hasSessionExpired(session)) {
-      return router.push(`/${getFrenchSlug("login")}`);
+      return router.push(getFrenchSlug("/login"));
     }
     if (action.openingType === "popup") {
       const popupParams = definePopupParams(action);
@@ -213,7 +213,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
 
   return (
     <div className="flex flex-col">
-      <ContentPageHeader action={addAction} onLinkClick={handleLinkClick} />
+      <ContentPageHeader action={addAction} onLinkClick={handleLinkClick} session={session} />
       <Filters filters={tempFilters} onFilterChange={handleFilterChange} paginationLimits={paginationLimits} currentLimit={filters.limit} handlePaginationLimit={handlePaginationLimit} />
       <div className="table-container">
         <div className="table-wrapper">
@@ -248,7 +248,7 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
                   <TableTr key={item.id}>
                     {columns.map((col) => (
                       <TableTd key={col.key}>
-                        <TableTdContent col={col} item={item} onDeleteClick={handleDeleteClick} onLinkClick={handleLinkClick} />
+                        <TableTdContent col={col} item={item} onDeleteClick={handleDeleteClick} onLinkClick={handleLinkClick} session={session} />
                       </TableTd>
                     ))}
                   </TableTr>

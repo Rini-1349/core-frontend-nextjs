@@ -4,7 +4,6 @@ import DataTable from "@/components/DataTable";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
-import { getFrenchSlug } from "@/lib/slugUtils";
 import { getRolesList } from "@/services/roles";
 import { faPenToSquare, faEye, faKey } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
@@ -18,7 +17,7 @@ const columns = [
       {
         key: "view",
         label: "Voir",
-        href: `/${getFrenchSlug("roles")}/[id]?mode=view`,
+        href: "/roles/[id]?mode=view",
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -37,7 +36,7 @@ const columns = [
       {
         key: "edit",
         label: "Modifier",
-        href: `/${getFrenchSlug("roles")}/[id]?mode=edit`,
+        href: "/roles/[id]?mode=edit",
         openingType: "popup",
         popupModalStyle: {
           top: "15%",
@@ -56,7 +55,7 @@ const columns = [
       {
         key: "editRolePermissions",
         label: "Permissions",
-        href: `/${getFrenchSlug("roles")}/[id]/permissions`,
+        href: "/roles/[id]/permissions",
         bgColor: "pink",
         icon: faKey,
         replacePatterns: [
@@ -81,7 +80,7 @@ const addAction = {
   key: "add",
   label: "Ajouter rôle",
   bgColor: "red",
-  href: `/${getFrenchSlug("roles/new")}`,
+  href: "/roles/new",
   openingType: "popup",
   popupModalStyle: {
     top: "15%",

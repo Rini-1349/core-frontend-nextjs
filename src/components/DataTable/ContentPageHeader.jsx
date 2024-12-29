@@ -1,12 +1,16 @@
+import { getFrenchSlug } from "@/lib/slugUtils";
 import { DefaultButton } from "../Button/DefaultButton";
+import { isAuthorizedRoute } from "@/utils/routesHelper";
 
 /**
  * ContentPageHeader component
  *
  * @returns {JSX.Element}
  */
-const ContentPageHeader = ({ action, onLinkClick }) => {
+const ContentPageHeader = ({ action, onLinkClick, session }) => {
   if (!action.href) return;
+  if (!session) return;
+  if (!isAuthorizedRoute({ pathname: action.href }, session)) return;
 
   return (
     <div className="flex">
@@ -14,7 +18,7 @@ const ContentPageHeader = ({ action, onLinkClick }) => {
         type="button"
         title={action.label}
         onClick={() => {
-          onLinkClick(action.href, action);
+          onLinkClick(getFrenchSlug(action.href), action);
         }}
         btnStyle="success"
         widthClass=""
