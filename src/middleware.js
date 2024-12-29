@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession, hasSessionExpired } from "./utils/session";
+import { getSession, hasSessionExpired, isUserSuperadmin } from "./utils/session";
 import { getEnglishSlug, getFrenchSlug, isFrenchSlugValid } from "@/lib/slugUtils";
 import { matchAuthorizedRoutes, matchPathname } from "./utils/routesHelper";
 import { allowedUrls } from "./lib/allowedUrls";
@@ -41,11 +41,13 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL(getFrenchSlug("/resend-validation-email"), req.url));
       }
       if (hasSessionExpired(session)) {
-        return NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
+        const response = NextResponse.redirect(new URL(getFrenchSlug("/login"), req.url));
+        response.cookies.delete("token"); // Supprime le cookie token
+        return response;
       }
 
       // Toutes les routes sont autorisées pour le ROLE_SUPERADMIN
-      const isRouteAuthorized = session.roles.includes("ROLE_SUPERADMIN") ? true : matchAuthorizedRoutes(pathname, session.permissions);
+      const isRouteAuthorized = isUserSuperadmin(session) ? true : matchAuthorizedRoutes(pathname, session.permissions);
       // Vérifie les autorisations et permissions de l'utilisateur
       if (!isRouteAllowed && !isRouteAuthorized) {
         console.log(`[Middleware] Unauthorized access to ${pathname}`);

@@ -16,7 +16,6 @@ export async function getUsersList(filters) {
   const query = new URLSearchParams({
     ...filters,
   }).toString();
-  console.log(query);
 
   return apiFetch(`users?${query}`, {
     headers: {

@@ -84,3 +84,7 @@ export function redirectToLogin() {
     window.location.href = `/${getFrenchSlug("login")}`;
   }
 }
+
+export function isUserSuperadmin(session) {
+  return session.roles.includes("ROLE_SUPERADMIN");
+}

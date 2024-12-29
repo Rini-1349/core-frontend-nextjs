@@ -8,8 +8,13 @@ export const routesPermissions = {
   removeUser: [/^\/users\/[0-9]+\/delete$/],
   rolesList: ["/roles"],
   newRole: ["/roles/new"],
-  roleDetails: [/^\/roles\/[0-9]+(\?mode=view)?$/],
-  roleEdit: [/^\/roles\/[0-9]+\?mode=edit$/],
-  rolePermissionsList: [/^\/roles\/[0-9]+\/permissions$/],
-  rolePermissionsEdit: [/^\/roles\/[0-9]+\/permissions$/],
+  roleDetails: [/^\/roles\/[A-Z_]+(\?mode=view)?$/],
+  roleEdit: [/^\/roles\/[A-Z_]+\?mode=edit$/],
+  rolePermissionsList: [/^\/roles\/[A-Z_]+\/permissions$/],
+  rolePermissionsEdit: [/^\/roles\/[A-Z_]+\/permissions$/],
+};
+
+export const routesGroups = {
+  users: [...routesPermissions.usersList, ...routesPermissions.newUser, ...routesPermissions.userDetails, ...routesPermissions.userEdit, ...routesPermissions.userEditPassword, ...routesPermissions.removeUser],
+  roles: [...routesPermissions.rolesList, ...routesPermissions.newRole, ...routesPermissions.roleDetails, ...routesPermissions.roleEdit, ...routesPermissions.rolePermissionsList, ...routesPermissions.rolePermissionsEdit],
 };
