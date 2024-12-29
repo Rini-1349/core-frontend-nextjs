@@ -1,13 +1,15 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { faKey, faUsers, faUsersGear, faXmarksLines } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getFrenchSlug } from "@/lib/slugUtils";
+import { matchAuthorizedRoutes } from "@/utils/routesHelper";
+import { useSession } from "@/context/SessionContext";
+import { isUserSuperadmin } from "@/utils/session";
+import { routesGroups } from "@/lib/routesPermissions";
 
 /**
  * menuGroups array
@@ -22,8 +24,8 @@ const menuGroups = [
         label: "Gestion utilisateurs",
         route: "#",
         children: [
-          { label: "Utilisateurs", route: `/${getFrenchSlug("users")}`, icon: faUsersGear },
-          { label: "Rôles", route: `${getFrenchSlug("/roles")}`, icon: faKey },
+          { label: "Utilisateurs", route: "/users", isActiveRoutes: routesGroups.users, icon: faUsersGear },
+          { label: "Rôles", route: "/roles", isActiveRoutes: routesGroups.roles, icon: faKey },
         ],
       },
     ],
@@ -39,7 +41,7 @@ const menuGroups = [
  * @returns {JSX.Element}
  */
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const pathname = usePathname();
+  const { session } = useSession();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
 
   return (
@@ -63,17 +65,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
           {/* <!-- Sidebar Menu --> */}
           <nav className="px-4 py-4 lg:px-6">
-            {menuGroups.map((group, groupIndex) => (
-              <div key={groupIndex}>
-                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">{group.name}</h3>
+            {session &&
+              menuGroups.map((group, groupIndex) => (
+                <div key={groupIndex}>
+                  <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">{group.name}</h3>
 
-                <ul className="mb-6 flex flex-col gap-1.5">
-                  {group.menuItems.map((menuItem, menuIndex) => (
-                    <SidebarItem key={menuIndex} item={menuItem} pageName={pageName} setPageName={setPageName} />
-                  ))}
-                </ul>
-              </div>
-            ))}
+                  <ul className="mb-6 flex flex-col gap-1.5">
+                    {group.menuItems
+                      .filter((menuItem) =>
+                        isUserSuperadmin(session)
+                          ? true
+                          : // Vérifie qu'il y a au moins une route "enfant" autorisée
+                            menuItem.children.some((child) => matchAuthorizedRoutes(child.route, session.permissions))
+                      )
+                      .map((menuItem, menuIndex) => (
+                        <SidebarItem key={menuIndex} item={menuItem} pageName={pageName} setPageName={setPageName} session={session} />
+                      ))}
+                  </ul>
+                </div>
+              ))}
           </nav>
           {/* <!-- Sidebar Menu --> */}
         </div>
