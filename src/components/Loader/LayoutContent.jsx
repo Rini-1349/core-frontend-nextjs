@@ -8,9 +8,12 @@ export default function LayoutContent({ children }) {
   const { isLoading } = useIsLoading();
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
+    <>
+      <div className="sticky min-h-full">
+        {isLoading && <div className="absolute -mx-4 -mb-8 -translate-y-4 z-40 inset-0 flex items-center justify-center bg-black/25"></div>}
+        {children}
+      </div>
       {isLoading && <Loader />}
-      {children}
-    </div>
+    </>
   );
 }

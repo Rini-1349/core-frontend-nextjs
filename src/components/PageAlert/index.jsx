@@ -31,7 +31,7 @@ function PageAlert() {
 
   return (
     alertMessage && (
-      <div className={`sticky top-0 left-0 right-0`}>
+      <div className={`sticky top-0 left-0 right-0 z-50`}>
         <div className={`absolute top-0 left-0 right-0 p-4 -mx-4 -translate-y-4 text-sm text-${color}-800 rounded-lg bg-${color}-100`} role="alert">
           <div className="flex justify-between items-center">
             <div className="m-auto">
