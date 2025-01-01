@@ -8,13 +8,13 @@ import { useIsLoading } from "@/context/LoadingContext";
 import { useSession } from "@/context/SessionContext";
 import { useTitle } from "@/context/TitleContext";
 import { getFrenchSlug } from "@/lib/slugUtils";
-import { createUser, getUserDetails, updateUser } from "@/services/users";
+import { createUser, getRolesList, getUserDetails, updateUser } from "@/services/users";
 import { isAuthorizedRoute } from "@/utils/routesHelper";
 import { hasSessionExpired } from "@/utils/session";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
 import { faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function UserDetails() {
   const { isLoading, setIsLoading } = useIsLoading();
@@ -24,10 +24,10 @@ export default function UserDetails() {
   const { session } = useSession();
 
   const [user, setUser] = useState(null);
+  const [rolesList, setRolesList] = useState([]);
   const [mode, setMode] = useState(id === "new" ? "add" : searchParams.get("mode") === "edit" ? "edit" : "view");
-  const [isModal, setIsModal] = useState(searchParams.get("modal") === "true" ? true : false);
+  const [isModal] = useState(searchParams.get("modal") === "true" ? true : false);
   const isReadOnly = mode === "view"; // Mode lecture seule si 'view'
-  const [formFields, setFormFields] = useState();
 
   const validate = (data) => {
     const errors = {};
@@ -35,26 +35,41 @@ export default function UserDetails() {
     if (!data.firstname) errors.firstname = "Le prénom est obligatoire.";
     if (!data.email) errors.email = "L'adresse email est obligatoire.";
     if (data.password !== data.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas.";
+    if (!data.roles) errors.roles = "Vous devez sélectionner au moins un rôle.";
     return errors;
   };
 
   const { title, setTitle } = useTitle();
 
+  // Générer formFields dynamiquement
+  const formFields = useMemo(() => [
+    { name: "lastname", label: "Nom", type: "text", icon: faUser },
+    { name: "firstname", label: "Prénom", type: "text", icon: faUserRegular },
+    { name: "email", label: "Email", type: "email", icon: faAt },
+    { name: "is_verified", label: "Adresse email vérifiée", type: "toggle" },
+    ...(mode === "add"
+      ? [
+          { name: "password", label: "Mot de passe", type: "password", icon: faKey },
+          { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", icon: faKey },
+        ]
+      : []),
+    {
+      name: "roles",
+      label: "Rôles",
+      type: "checkbox-multiple",
+      options: { ...rolesList }, // Synchro directe avec rolesList
+      breakAfter: true,
+    },
+  ]);
+
   // Définir le titre de la page en fonction du mode
   useEffect(() => {
-    setFormFields([
-      { name: "lastname", label: "Nom", type: "text", icon: faUser },
-      { name: "firstname", label: "Prénom", type: "text", icon: faUserRegular },
-      { name: "email", label: "Email", type: "email", icon: faAt },
-      { name: "is_verified", label: "Adresse email vérifiée", type: "toggle" },
-    ]);
     if (mode === "view") {
       setTitle("Détails utilisateur");
     } else if (mode === "edit") {
       setTitle("Modifier utilisateur");
     } else if (mode === "add") {
       setTitle("Ajouter utilisateur");
-      setFormFields((prev) => [...prev, { name: "password", label: "Mot de passe", type: "password", icon: faKey }, { name: "confirmPassword", label: "Confirmation mot de passe", type: "password", icon: faKey }]);
     }
   }, [mode]);
 
@@ -67,7 +82,8 @@ export default function UserDetails() {
         try {
           const response = await getUserDetails(id);
           if (response) {
-            setUser(response.data);
+            setUser(response.data.user);
+            setRolesList(response.data.roles);
           }
         } catch (error) {
           console.log(error.message);
@@ -78,7 +94,24 @@ export default function UserDetails() {
 
       loadData();
     } else if (mode === "add") {
-      setUser({ lastname: "", firstname: "", email: "", is_verified: 0 }); // Formulaire vide pour ajout
+      // Récupère la liste des rôles
+      const loadRolesList = async () => {
+        setIsLoading(true);
+        try {
+          const response = await getRolesList();
+          console.log(response);
+          if (response) {
+            setRolesList(response.data);
+          }
+        } catch (error) {
+          console.log(error.message);
+        } finally {
+          setIsLoading(false); // Désactiver le loader
+        }
+      };
+
+      loadRolesList();
+      setUser({ lastname: "", firstname: "", email: "", is_verified: 0, roles: [] }); // Formulaire vide pour ajout
     }
   }, [id, mode]);
 
@@ -113,7 +146,6 @@ export default function UserDetails() {
       return { type: "success", text: response.message, redirectUrl: mode === "add" && !isModal ? `/${getFrenchSlug("users")}/${response.id}` : "" };
     } catch (error) {
       console.log(error);
-      console.log("Signup failed", error);
       return { type: "error", text: error.message };
     } finally {
       setIsLoading(false); // Désactiver le loader

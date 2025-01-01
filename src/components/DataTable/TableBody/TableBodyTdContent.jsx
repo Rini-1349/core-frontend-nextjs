@@ -17,6 +17,14 @@ const TableBodyTdContent = ({ col, item, onDeleteClick, onLinkClick, session }) 
     } else {
       content = col.boolean.false;
     }
+  } else if (col.display === "list") {
+    content = (
+      <ul>
+        {item[col.key].map((selectLabel, selectKey) => (
+          <li key={selectKey}>{selectLabel}</li>
+        ))}
+      </ul>
+    );
   } else if (col.actions) {
     content = col.actions.map((action, index) => {
       let href = "";

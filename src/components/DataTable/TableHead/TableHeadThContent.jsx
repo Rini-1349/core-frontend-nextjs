@@ -37,7 +37,7 @@ const TableHeadThContent = ({ col, filters, thType, onFilterChange, onClearFilte
         break;
       case "select":
         content = (
-          <select value={filters.is_verified} onChange={(e) => onFilterChange(col.key, e.target.value)} className="relative z-20 inline-flex bg-transparent px-0 font-medium text-gray-500 outline-2 outline-transparent outline-offset-2 border border-gray-400 rounded-md p-1">
+          <select value={filters[col.key]} onChange={(e) => onFilterChange(col.key, e.target.value)} className="relative z-20 inline-flex px-0 font-medium text-gray-500 outline-2 outline-transparent outline-offset-2 border border-gray-400 rounded-md p-1">
             {Object.keys(col.selectData).map((key) => (
               <option key={key} value={key}>
                 {col.selectData[key]}

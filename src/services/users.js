@@ -12,10 +12,8 @@ const BEARER_TOKEN = getTokenClientSide();
  * @param {array} filters
  * @returns {Axios}
  */
-export async function getUsersList(filters) {
-  const query = new URLSearchParams({
-    ...filters,
-  }).toString();
+export async function getUsersList(filters, getRoles) {
+  const query = new URLSearchParams({ get_roles: getRoles ? 1 : 0, ...filters }).toString();
 
   return apiFetch(`users?${query}`, {
     headers: {
@@ -72,6 +70,21 @@ export async function editProfilePassword({ data }) {
     },
     method: "POST",
     body: JSON.stringify(data),
+  });
+}
+
+/**
+ * getRolesList function
+ *
+ * @export
+ * @async
+ * @returns {Axios}
+ */
+export async function getRolesList() {
+  return apiFetch(`users/roles`, {
+    headers: {
+      Authorization: `Bearer ${BEARER_TOKEN}`,
+    },
   });
 }
 

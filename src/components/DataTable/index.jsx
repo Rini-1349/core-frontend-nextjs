@@ -46,7 +46,6 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
       if (response) {
         let updatedPagination = { ...response.data?.pagination };
         updatedPagination = setPaginationButtons(updatedPagination);
-
         setPagination(updatedPagination);
         setItems(response.data?.items);
       }
@@ -176,7 +175,6 @@ const DataTable = ({ columns, fetchData, deleteItem, setIsLoading, isLoading, pa
   const handleFilterChange = (key, value) => {
     setTempFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters, [key]: value };
-      console.log(value);
       // Appelle immédiatement la fonction debounced avec les filtres mis à jour
       debouncedUpdateFilters(updatedFilters);
 

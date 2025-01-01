@@ -8,6 +8,7 @@ import { formatToogleValueIntoBoolean, updateToggleInputs } from "@/utils/toggle
 import { useRouter } from "next/navigation";
 import { useAlert } from "@/context/AlertContext";
 import { InputGroup } from "./Input/InputGroup";
+import { CheckboxMultiple } from "./Input/CheckboxMultiple";
 
 // Traduction de la largeur en classes Tailwind
 function defineWidthClass(field) {
@@ -22,7 +23,9 @@ function defineWidthClass(field) {
 
 function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
   if (field.type === "toggle") {
-    return <Toggle name={field.name} defaultChecked={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} />;
+    return <Toggle name={field.name} defaultChecked={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} errorMessage={fieldErrors[field.name]} />;
+  } else if (field.type === "checkbox-multiple") {
+    return <CheckboxMultiple name={field.name} options={field.options} selectedValues={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} errorMessage={fieldErrors[field.name]} />;
   } else if (field.icon) {
     return (
       <>
@@ -50,7 +53,20 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, set
     e.preventDefault();
     setGlobalMessage(null);
 
-    const formDataFromDOM = Object.fromEntries(new FormData(e.target).entries());
+    const formData = new FormData(e.target);
+
+    // Convertit en objet tout en gérant les champs multiples
+    const formDataFromDOM = {};
+    formData.forEach((value, key) => {
+      if (formDataFromDOM[key]) {
+        // Si la clé existe déjà, convertit en tableau (ou ajoute au tableau existant)
+        formDataFromDOM[key] = [].concat(formDataFromDOM[key], value);
+      } else {
+        // Sinon, assigne la valeur directement
+        formDataFromDOM[key] = value;
+      }
+    });
+
     formatToogleValueIntoBoolean(formDataFromDOM, toggleInputs); // Traitement spécial des toggles
 
     if (validateForm(formDataFromDOM)) {
