@@ -35,7 +35,7 @@ export default function AdminLayout({ children }) {
               <PageAlert />
               <PopupProvider>
                 <LoadingProvider>
-                  <LayoutContent>{children}</LayoutContent>
+                  <LayoutContent fullPage={false}>{children}</LayoutContent>
                 </LoadingProvider>
               </PopupProvider>
             </AlertProvider>
