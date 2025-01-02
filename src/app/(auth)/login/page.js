@@ -64,7 +64,7 @@ export default function Login() {
     <div className="px-2">
       <ClientMeta title={title} />
       <AuthHeading1 title="Connexion" className="mb-10" />
-      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} isReadOnly={false} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage">
+      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage">
         <div className="flex items-center justify-between mb-5">
           <Link href={`/${getFrenchSlug("forgot-password")}`} className="text-sm text-blue-600 hover:underline ml-auto">
             Mot de passe oublié ?

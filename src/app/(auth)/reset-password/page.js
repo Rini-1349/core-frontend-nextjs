@@ -94,7 +94,7 @@ export default function ResetPassword() {
       <ClientMeta title={title} />
       <AuthHeading1 title="Réinitialisation mot de passe" className="mb-10" />
       {isTokenValid ? (
-        <Form fields={formFields} item={{}} validate={validate} onSubmit={handlePasswordReset} isReadOnly={false} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
+        <Form fields={formFields} item={{}} validate={validate} onSubmit={handlePasswordReset} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
       ) : (
         <div className="text-sm text-gray-500 mt-3">
           <GlobalMessage message={globalMessage} />

@@ -60,7 +60,7 @@ export default function ForgotPassword() {
     <div className="px-2">
       <ClientMeta title={title} />
       <AuthHeading1 title="Mot de passe oublié" className="mb-10" />
-      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleForgotPassword} isReadOnly={false} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
+      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleForgotPassword} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
 
       <p className="text-sm text-gray-500 mt-5 px-2">
         <Link href={getFrenchSlug("/login")} className="text-blue-700 hover:underline">

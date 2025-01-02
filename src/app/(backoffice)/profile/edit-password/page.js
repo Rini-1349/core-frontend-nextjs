@@ -62,7 +62,7 @@ export default function EditProfilePassword() {
           className="mb-5"
         />
       </div>
-      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} isReadOnly={false} setMode="edit" />
+      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} setMode="edit" />
     </div>
   );
 }

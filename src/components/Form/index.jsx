@@ -21,7 +21,7 @@ function defineWidthClass(field) {
   return widthClass;
 }
 
-function generateInput(field, item, isReadOnly, fieldErrors, handleChange) {
+function generateInput(field, item, isReadOnly = false, fieldErrors, handleChange) {
   if (field.type === "toggle") {
     return <Toggle name={field.name} defaultChecked={item[field.name]} onChange={handleChange} disabled={isReadOnly} className={field.className} label={field.label} errorMessage={fieldErrors[field.name]} />;
   } else if (field.type === "checkbox-multiple") {

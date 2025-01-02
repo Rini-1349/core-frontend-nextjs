@@ -75,7 +75,7 @@ export default function Profile() {
   return (
     <div>
       <ClientMeta title={title} />
-      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={false} setMode="edit">
+      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} setMode="edit">
         <div className="flex">
           <DefaultButton
             type="button"
