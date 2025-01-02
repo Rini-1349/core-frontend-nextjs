@@ -2,8 +2,6 @@ import apiFetch from "@/services/api";
 import { getTokenClientSide } from "@/utils/session";
 import { Axios } from "axios";
 
-const BEARER_TOKEN = getTokenClientSide();
-
 /**
  * getRolesList function
  *
@@ -19,7 +17,7 @@ export async function getRolesList(filters) {
 
   return apiFetch(`roles?${query}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -35,7 +33,7 @@ export async function getRolesList(filters) {
 export async function getRoleDetails(id) {
   return apiFetch(`roles/${id}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -51,7 +49,7 @@ export async function getRoleDetails(id) {
 export async function createRole(data) {
   return apiFetch("roles", {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "POST",
     body: JSON.stringify(data),
@@ -70,7 +68,7 @@ export async function createRole(data) {
 export async function updateRole({ id, data }) {
   return apiFetch(`roles/${id}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "PUT",
     body: JSON.stringify(data),
@@ -88,7 +86,7 @@ export async function updateRole({ id, data }) {
 export async function getRolePermissions(id) {
   return apiFetch(`roles/${id}/permissions`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -104,7 +102,7 @@ export async function getRolePermissions(id) {
 export async function updateRolePermissions({ id, data }) {
   return apiFetch(`roles/${id}/permissions`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "POST",
     body: JSON.stringify(data),

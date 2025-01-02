@@ -2,8 +2,6 @@ import apiFetch from "@/services/api";
 import { getTokenClientSide } from "@/utils/session";
 import { Axios } from "axios";
 
-const BEARER_TOKEN = getTokenClientSide();
-
 /**
  * getUsersList function
  *
@@ -17,7 +15,7 @@ export async function getUsersList(filters, getRoles) {
 
   return apiFetch(`users?${query}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -32,7 +30,7 @@ export async function getUsersList(filters, getRoles) {
 export async function getProfile() {
   return apiFetch(`profile`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -48,7 +46,7 @@ export async function getProfile() {
 export async function updateProfile({ data }) {
   return apiFetch(`profile`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "PUT",
     body: JSON.stringify(data),
@@ -66,7 +64,7 @@ export async function updateProfile({ data }) {
 export async function editProfilePassword({ data }) {
   return apiFetch(`profile/edit-password`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "POST",
     body: JSON.stringify(data),
@@ -83,7 +81,7 @@ export async function editProfilePassword({ data }) {
 export async function getRolesList() {
   return apiFetch(`users/roles`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -99,7 +97,7 @@ export async function getRolesList() {
 export async function getUserDetails(id) {
   return apiFetch(`users/${id}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
   });
 }
@@ -115,7 +113,7 @@ export async function getUserDetails(id) {
 export async function createUser(data) {
   return apiFetch("/users", {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "POST",
     body: JSON.stringify(data),
@@ -134,7 +132,7 @@ export async function createUser(data) {
 export async function updateUser({ id, data }) {
   return apiFetch(`users/${id}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "PUT",
     body: JSON.stringify(data),
@@ -153,7 +151,7 @@ export async function updateUser({ id, data }) {
 export async function editUserPassword({ id, data }) {
   return apiFetch(`users/${id}/edit-password`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "POST",
     body: JSON.stringify(data),
@@ -171,7 +169,7 @@ export async function editUserPassword({ id, data }) {
 export async function deleteUser(itemId) {
   return apiFetch(`users/${itemId}`, {
     headers: {
-      Authorization: `Bearer ${BEARER_TOKEN}`,
+      Authorization: `Bearer ${getTokenClientSide()}`,
     },
     method: "DELETE",
   });

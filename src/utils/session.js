@@ -1,17 +1,7 @@
 import { allowedUrls } from "@/lib/allowedUrls";
 import { getEnglishSlug, getFrenchSlug } from "@/lib/slugUtils";
 import { jwtDecode } from "jwt-decode";
-
-/**
- * setSession function
- * Gère la session : enregistre le token dans les cookies
- *
- * @export
- * @param {string} token
- */
-export function setSession(token) {
-  document.cookie = `token=${token}; path=/`;
-}
+import Cookies from "js-cookie";
 
 /**
  * getSession
@@ -19,7 +9,7 @@ export function setSession(token) {
  *
  * @export
  * @param {string} [token=null]
- * @returns {{}}
+ * @returns {{} | null}
  */
 export function getSession(token = null) {
   // Si aucun token n'est fourni, essaie de le récupérer des cookies
@@ -32,45 +22,60 @@ export function getSession(token = null) {
 }
 
 /**
+ * setSession
+ * Enregistre le token JWT dans les cookies
+ *
+ * @export
+ * @param {string} token
+ */
+export function setSession(token) {
+  Cookies.set("token", token, { path: "/" });
+}
+
+/**
+ * getTokenClientSide
+ * Récupère le token depuis les cookies côté client
+ *
+ * @export
+ * @returns {string | undefined}
+ */
+export function getTokenClientSide() {
+  return Cookies.get("token");
+}
+
+/**
  * clearSession
  * Supprime le token des cookies
  *
  * @export
  */
 export function clearSession() {
-  document.cookie = "token=; Max-Age=0; path=/";
+  Cookies.remove("token", { path: "/" });
 }
 
 /**
- * getTokenClientSide
- * Récupère le token dans les cookies côté client
+ * hasSessionExpired
+ * Vérifie si une session est expirée
  *
  * @export
- * @returns {string}
+ * @param {object} session
+ * @returns {boolean}
  */
-export function getTokenClientSide() {
-  // Vérifie si l'exécution est côté client
-  if (typeof window !== "undefined") {
-    const match = document.cookie.match(new RegExp("(^| )token=([^;]+)"));
-    return match ? match[2] : null;
-  }
-  console.log("getTokenClientSide appelé côté serveur !");
-  return null;
-}
-
 export function hasSessionExpired(session) {
   const currentTime = Math.floor(Date.now() / 1000);
-  if (session.exp && session.exp < currentTime) {
-    return true;
-  }
-
-  return false;
+  return session.exp && session.exp < currentTime;
 }
 
+/**
+ * redirectToLogin
+ * Redirige l'utilisateur vers la page de connexion
+ *
+ * @export
+ */
 export function redirectToLogin() {
   if (typeof window !== "undefined") {
     const currentUrl = getEnglishSlug(window.location.pathname);
-    const excludedUrls = allowedUrls["unloggedUsers"]; // Liste des URL à exclure
+    const excludedUrls = allowedUrls["unloggedUsers"];
 
     // Si l'URL actuelle fait partie des exclusions, on ignore la redirection
     if (excludedUrls.some((url) => currentUrl.includes(url))) {
@@ -85,6 +90,14 @@ export function redirectToLogin() {
   }
 }
 
+/**
+ * isUserSuperadmin
+ * Vérifie si un utilisateur a le rôle super administrateur
+ *
+ * @export
+ * @param {object} session
+ * @returns {boolean}
+ */
 export function isUserSuperadmin(session) {
   return session.roles.includes("ROLE_SUPERADMIN");
 }
