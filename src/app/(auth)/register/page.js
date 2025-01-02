@@ -10,6 +10,7 @@ import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useTitle } from "@/context/TitleContext";
 import { useEffect } from "react";
 import Form from "@/components/Form";
+import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 
 /**
  * Register page
@@ -30,8 +31,24 @@ export default function Register() {
     const errors = {};
     if (!data.username) errors.username = "L'adresse email est obligatoire.";
     if (!data.password) errors.password = "Le mot de passe est obligatoire.";
-    if (data.password !== data.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas.";
+    const passwordError = validatePassword(data.password);
+    const confirmPasswordError = validateConfirmPassword("confirmPassword", data.confirmPassword);
+    if (passwordError !== "") errors.password = passwordError;
+    if (confirmPasswordError !== "") errors.confirmPassword = confirmPasswordError;
+
     return errors;
+  };
+
+  const validateOnChange = (name, value, fieldErrors) => {
+    let errors = { password: fieldErrors.password, confirmPassword: fieldErrors.confirmPassword };
+
+    // Validation pour le mot de passe et la confirmation de mot de passe
+    if (name === "password" || name === "confirmPassword") {
+      errors["password"] = validatePassword(value);
+      errors["confirmPassword"] = validateConfirmPassword(name, value);
+    }
+
+    return { errors: errors };
   };
 
   const handleSubmit = async (values) => {
@@ -69,7 +86,7 @@ export default function Register() {
     <div className="px-2">
       <ClientMeta title={title} />
       <AuthHeading1 title="Créer un compte" className="mb-10" />
-      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
+      <Form fields={formFields} item={{}} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
       <p className="text-sm text-gray-500 mt-5 px-2">
         <Link href={getFrenchSlug("/login")} className="text-blue-700 hover:underline">
           Retour à la page de connexion

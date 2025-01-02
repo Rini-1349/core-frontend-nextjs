@@ -7,6 +7,7 @@ import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { editProfilePassword } from "@/services/users";
+import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
@@ -15,14 +16,29 @@ export default function EditProfilePassword() {
 
   const [formFields, setFormFields] = useState([
     { name: "currentPassword", label: "Ancien mot de passe", type: "password", breakAfter: true, icon: faKey },
-    { name: "newPassword", label: "Nouveau mot de passe", type: "password", icon: faKey },
-    { name: "confirmNewPassword", label: "Confirmation nouveau mot de passe", type: "password", icon: faKey },
+    { name: "password", label: "Nouveau mot de passe", type: "password", icon: faKey },
+    { name: "confirmPassword", label: "Confirmation nouveau mot de passe", type: "password", icon: faKey },
   ]);
 
   const validate = (data) => {
     const errors = {};
-    if (data.newPassword !== data.confirmNewPassword) errors.confirmNewPassword = "Les mots de passe ne correspondent pas.";
+    const passwordError = validatePassword(data.password);
+    const confirmPasswordError = validateConfirmPassword("confirmPassword", data.confirmPassword);
+    if (passwordError !== "") errors.password = passwordError;
+    if (confirmPasswordError !== "") errors.confirmPassword = confirmPasswordError;
     return errors;
+  };
+
+  const validateOnChange = (name, value, fieldErrors) => {
+    let errors = { password: fieldErrors.password, confirmPassword: fieldErrors.confirmPassword };
+
+    // Validation pour le mot de passe et la confirmation de mot de passe
+    if (name === "password" || name === "confirmPassword") {
+      errors["password"] = validatePassword(value);
+      errors["confirmPassword"] = validateConfirmPassword(name, value);
+    }
+
+    return { errors: errors };
   };
 
   const { title, setTitle } = useTitle();
@@ -62,7 +78,7 @@ export default function EditProfilePassword() {
           className="mb-5"
         />
       </div>
-      <Form fields={formFields} item={{}} validate={validate} onSubmit={handleSubmit} setMode="edit" />
+      <Form fields={formFields} item={{}} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} setMode="edit" />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { getFrenchSlug } from "@/lib/slugUtils";
 import { createUser, getRolesList, getUserDetails, updateUser } from "@/services/users";
 import { isAuthorizedRoute } from "@/utils/routesHelper";
 import { hasSessionExpired } from "@/utils/session";
+import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
 import { faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useSearchParams } from "next/navigation";
@@ -34,9 +35,25 @@ export default function UserDetails() {
     if (!data.lastname) errors.lastname = "Le nom est obligatoire.";
     if (!data.firstname) errors.firstname = "Le prénom est obligatoire.";
     if (!data.email) errors.email = "L'adresse email est obligatoire.";
-    if (data.password !== data.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas.";
     if (!data.roles) errors.roles = "Vous devez sélectionner au moins un rôle.";
+    const passwordError = validatePassword(data.password);
+    const confirmPasswordError = validateConfirmPassword("confirmPassword", data.confirmPassword);
+    if (passwordError !== "") errors.password = passwordError;
+    if (confirmPasswordError !== "") errors.confirmPassword = confirmPasswordError;
+
     return errors;
+  };
+
+  const validateOnChange = (name, value, fieldErrors) => {
+    let errors = { password: fieldErrors.password, confirmPassword: fieldErrors.confirmPassword };
+
+    // Validation pour le mot de passe et la confirmation de mot de passe
+    if (name === "password" || name === "confirmPassword") {
+      errors["password"] = validatePassword(value);
+      errors["confirmPassword"] = validateConfirmPassword(name, value);
+    }
+
+    return { errors: errors };
   };
 
   const { title, setTitle } = useTitle();
@@ -65,13 +82,13 @@ export default function UserDetails() {
   // Définir le titre de la page en fonction du mode
   useEffect(() => {
     if (mode === "view") {
-      setTitle("Détails utilisateur");
+      setTitle(`Détails utilisateur  - ${user?.lastname || ""} ${user?.firstname || ""}`);
     } else if (mode === "edit") {
-      setTitle("Modifier utilisateur");
+      setTitle(`Modifier utilisateur - ${user?.lastname || ""} ${user?.firstname || ""}`);
     } else if (mode === "add") {
       setTitle("Ajouter utilisateur");
     }
-  }, [mode]);
+  }, [mode, user]);
 
   // Récupération des données utilisateur
   useEffect(() => {
@@ -156,7 +173,7 @@ export default function UserDetails() {
     <div>
       <ClientMeta title={title} />
       <ModalHeading title={title} isModal={isModal} />
-      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode}>
+      <Form fields={formFields} initialValues={mode === "add" ? { password: "", confirmPassword: "" } : {}} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} validateOnChange={validateOnChange}>
         {mode === "edit" && isAuthorizedRoute({ pathname: `/users/${user.id}/edit-password` }, session) && (
           <div className="flex">
             <DefaultButton

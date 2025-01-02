@@ -11,6 +11,7 @@ import { useIsLoading } from "@/context/LoadingContext";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useTitle } from "@/context/TitleContext";
 import Form from "@/components/Form";
+import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 
 /**
  * ResetPassword page
@@ -31,8 +32,23 @@ export default function ResetPassword() {
 
   const validate = (data) => {
     const errors = {};
-    if (data.password !== data.confirmPassword) errors.confirmPassword = "Les mots de passe ne correspondent pas.";
+    const passwordError = validatePassword(data.password);
+    const confirmPasswordError = validateConfirmPassword("confirmPassword", data.confirmPassword);
+    if (passwordError !== "") errors.password = passwordError;
+    if (confirmPasswordError !== "") errors.confirmPassword = confirmPasswordError;
     return errors;
+  };
+
+  const validateOnChange = (name, value, fieldErrors) => {
+    let errors = { password: fieldErrors.password, confirmPassword: fieldErrors.confirmPassword };
+
+    // Validation pour le mot de passe et la confirmation de mot de passe
+    if (name === "password" || name === "confirmPassword") {
+      errors["password"] = validatePassword(value);
+      errors["confirmPassword"] = validateConfirmPassword(name, value);
+    }
+
+    return { errors: errors };
   };
 
   // Gestion via le hook `useForm`
@@ -94,7 +110,7 @@ export default function ResetPassword() {
       <ClientMeta title={title} />
       <AuthHeading1 title="Réinitialisation mot de passe" className="mb-10" />
       {isTokenValid ? (
-        <Form fields={formFields} item={{}} validate={validate} onSubmit={handlePasswordReset} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
+        <Form fields={formFields} item={{}} validate={validate} validateOnChange={validateOnChange} onSubmit={handlePasswordReset} submitButton={submitButton} formStyle={formStyle} onSubmitResponseDisplayType="globalMessage" />
       ) : (
         <div className="text-sm text-gray-500 mt-3">
           <GlobalMessage message={globalMessage} />

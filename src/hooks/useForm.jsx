@@ -14,7 +14,13 @@ import { useState } from "react";
  *   validateForm: (formDataFromDOM?: {}) => boolean;
  * }}
  */
-export const useForm = (initialState, validate) => {
+export const useForm = (
+  initialState,
+  validate,
+  validateOnChange = () => {
+    return { errors: {} };
+  }
+) => {
   const [formData, setFormData] = useState(initialState);
   const [fieldErrors, setFieldErrors] = useState({});
   const [globalMessage, setGlobalMessage] = useState(null);
@@ -25,9 +31,23 @@ export const useForm = (initialState, validate) => {
     // Met à jour uniquement les champs définis dans initialState
     if (name in initialState) {
       setFormData({ ...formData, [name]: value });
-      setFieldErrors({ ...fieldErrors, [name]: "" });
       setGlobalMessage(null);
     }
+
+    // Validation à lancer à chaque changement
+    const validation = validateOnChange(name, value, fieldErrors);
+    setFieldErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      Object.entries(validation.errors).forEach(([key, value]) => {
+        updatedErrors[key] = value; // Ajoute ou met à jour chaque erreur
+      });
+
+      if (!validation.errors[name]) {
+        updatedErrors[name] = "";
+      }
+
+      return updatedErrors;
+    });
   };
 
   const validateForm = (formDataFromDOM = {}) => {

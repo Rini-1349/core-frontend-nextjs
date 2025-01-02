@@ -8,6 +8,7 @@ import { useSession } from "@/context/SessionContext";
 import { useTitle } from "@/context/TitleContext";
 import { editUserPassword, getUserDetails } from "@/services/users";
 import { hasSessionExpired } from "@/utils/session";
+import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,21 +23,36 @@ export default function UserDetails() {
 
   const [user, setUser] = useState(null);
   const [formFields, setFormFields] = useState([
-    { name: "newPassword", label: "Nouveau mot de passe", type: "password", icon: faKey },
-    { name: "confirmNewPassword", label: "Confirmation nouveau mot de passe", type: "password", icon: faKey },
+    { name: "password", label: "Nouveau mot de passe", type: "password", icon: faKey },
+    { name: "confirmPassword", label: "Confirmation nouveau mot de passe", type: "password", icon: faKey },
   ]);
 
   const validate = (data) => {
     const errors = {};
-    if (data.newPassword !== data.confirmNewPassword) errors.confirmNewPassword = "Les mots de passe ne correspondent pas.";
+    const passwordError = validatePassword(data.password);
+    const confirmPasswordError = validateConfirmPassword("confirmPassword", data.confirmPassword);
+    if (passwordError !== "") errors.password = passwordError;
+    if (confirmPasswordError !== "") errors.confirmPassword = confirmPasswordError;
     return errors;
+  };
+
+  const validateOnChange = (name, value, fieldErrors) => {
+    let errors = { password: fieldErrors.password, confirmPassword: fieldErrors.confirmPassword };
+
+    // Validation pour le mot de passe et la confirmation de mot de passe
+    if (name === "password" || name === "confirmPassword") {
+      errors["password"] = validatePassword(value);
+      errors["confirmPassword"] = validateConfirmPassword(name, value);
+    }
+
+    return { errors: errors };
   };
 
   const { title, setTitle } = useTitle();
   // Définir le titre de la page en fonction du mode
   useEffect(() => {
-    setTitle(`Modification mot de passe`);
-  }, []);
+    setTitle(`Modification mot de passe - ${user?.lastname || ""} ${user?.firstname || ""}`);
+  }, [user]);
 
   // Récupération des données utilisateur
   useEffect(() => {
@@ -47,8 +63,7 @@ export default function UserDetails() {
         try {
           const response = await getUserDetails(id);
           if (response) {
-            setUser(response.data);
-            setTitle(`Modification mot de passe - ${response.data.lastname} ${response.data.firstname}`);
+            setUser(response.data.user);
           }
         } catch (error) {
           console.log(error.message);
@@ -101,7 +116,7 @@ export default function UserDetails() {
     <div>
       <ClientMeta title={title} />
       <ModalHeading title={title} isModal={isModal} />
-      <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} setMode="edit" />
+      <Form fields={formFields} item={user} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} setMode="edit" />
     </div>
   );
 }

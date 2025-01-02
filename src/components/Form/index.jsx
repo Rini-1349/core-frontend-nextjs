@@ -37,8 +37,8 @@ function generateInput(field, item, isReadOnly = false, fieldErrors, handleChang
   }
 }
 
-export default function Form({ children, fields, onSubmit, isReadOnly, item, setMode, validate, initialValues = {}, onSubmitResponseDisplayType = "alert", submitButton, formStyle }) {
-  const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate);
+export default function Form({ children, fields, onSubmit, isReadOnly, item, validate, validateOnChange, initialValues = {}, onSubmitResponseDisplayType = "alert", submitButton, formStyle }) {
+  const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate, validateOnChange);
   const { showAlert } = useAlert();
   const router = useRouter();
 
