@@ -10,8 +10,8 @@ export default function ModalHeading({ title, isModal }) {
   return (
     <>
       {isModal && (
-        <div className="flex justify-center items-center pb-3 mb-3 border-b border-gray-300 dark:border-gray-600">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h2>
+        <div className="flex justify-center items-center pb-3 mb-3 border-b border-gray-300">
+          <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
         </div>
       )}
     </>

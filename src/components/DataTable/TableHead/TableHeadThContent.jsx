@@ -33,7 +33,7 @@ const TableHeadThContent = ({ col, filters, thType, onFilterChange, onClearFilte
   } else if (thType === "filter") {
     switch (col.search) {
       case "input":
-        content = <input type="text" value={filters[col.key]} onChange={(e) => onFilterChange(col.key, e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200" />;
+        content = <input type="text" value={filters[col.key]} onChange={(e) => onFilterChange(col.key, e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200" />;
         break;
       case "select":
         content = (

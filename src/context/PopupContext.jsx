@@ -53,7 +53,7 @@ export const PopupProvider = ({ children }) => {
           {/* Overlay (fond) avec gestion du clic pour fermer la pop-up */}
           <div
             id="overlay"
-            className="absolute inset-0 bg-black/25 dark:bg-white/25 z-40"
+            className="absolute inset-0 bg-black/25 z-40"
             onClick={handleOverlayClick} // Clic à l'extérieur
           ></div>
 

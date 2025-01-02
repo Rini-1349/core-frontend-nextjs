@@ -22,7 +22,7 @@ export const InputWithAddons = ({ icon, type = "text", name, value, onChange, de
   return (
     <>
       <div className={`flex rounded-none rounded-lg ${errorMessage ? "border border-red-500" : ""}`} title={title}>
-        <span className={`inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600 ${errorMessage ? "bg-red-200" : ""}`}>{icon ? <FontAwesomeIcon icon={icon} className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : label}</span>
+        <span className={`inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-e-0 border-gray-300 rounded-s-md ${errorMessage ? "bg-red-200" : ""}`}>{icon ? <FontAwesomeIcon icon={icon} className="w-4 h-4 text-gray-500" /> : label}</span>
         <input id={name} name={name} type={type} value={value} defaultValue={defaultValue} onChange={onChange} placeholder={placeholder} required={required} className={`p-2 border rounded-none rounded-e-lg focus:outline-none focus:ring-2 block flex-1 min-w-0 w-full ${errorMessage ? "bg-red-50 border text-red-900 placeholder-red-700 focus:ring-red-300" : "border-gray-300 focus:ring-blue-300"} ${className ? className : ""}`} disabled={disabled} maxLength={maxLength} minLength={minLength} />
       </div>
       <ErrorMessage errorMessage={errorMessage} />

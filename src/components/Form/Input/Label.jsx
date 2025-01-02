@@ -10,7 +10,7 @@
  */
 export const Label = ({ label, htmlFor, errorMessage = "", className = "" }) => {
   return (
-    <label htmlFor={htmlFor} className={`mb-2 text-sm font-medium ${errorMessage ? "text-red-500 dark:text-red-500" : "text-gray-700"} ${className ? className : ""}`}>
+    <label htmlFor={htmlFor} className={`mb-2 text-sm font-medium ${errorMessage ? "text-red-500" : "text-gray-700"} ${className ? className : ""}`}>
       {label}
     </label>
   );
