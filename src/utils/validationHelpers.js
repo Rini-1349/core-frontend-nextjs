@@ -1,4 +1,5 @@
 export const validatePassword = (value) => {
+  if (value === undefined) return "";
   // Vérification des critères de complexité du mot de passe
   const regexUpperCase = /[A-Z]/;
   const regexLowerCase = /[a-z]/;
@@ -13,6 +14,7 @@ export const validatePassword = (value) => {
 };
 
 export const validateConfirmPassword = (name, value) => {
+  if (value === undefined) return "";
   const password = name === "password" ? value : document.querySelector(`input[name="password"]`).value;
   const confirmPassword = name === "confirmPassword" ? value : document.querySelector(`input[name="confirmPassword"]`).value;
   return password !== confirmPassword ? "Les mots de passe ne correspondent pas." : "";
