@@ -42,15 +42,20 @@ export default function RoleDetails() {
   // Définir le titre de la page en fonction du mode
   useEffect(() => {
     setFormFields([{ name: "description", label: "Nom", type: "text", icon: faSignature }]);
-    if (mode === "view") {
-      setTitle("Détails rôle");
-    } else if (mode === "edit") {
-      setTitle("Modifier rôle");
-    } else if (mode === "add") {
-      setTitle("Ajouter rôle");
-      setFormFields((prev) => [...prev, { name: "id", label: "Clef (15 caractères maximum)", type: "text", minLength: 1, maxLength: 15, icon: faCode }]);
-    }
   }, [mode]);
+
+  useEffect(() => {
+    if (role) {
+      if (mode === "view") {
+        setTitle(`Rôle "${role?.description || ""}"`);
+      } else if (mode === "edit") {
+        setTitle(`Modifier rôle "${role?.description || ""}"`);
+      } else if (mode === "add") {
+        setTitle("Ajouter rôle");
+        setFormFields((prev) => [...prev, { name: "id", label: "Clef (15 caractères maximum)", type: "text", minLength: 1, maxLength: 15, icon: faCode }]);
+      }
+    }
+  }, [mode, role]);
 
   // Récupération des données utilisateur
   useEffect(() => {
@@ -117,7 +122,7 @@ export default function RoleDetails() {
   return (
     <div>
       <ClientMeta title={title} />
-      <ModalHeading title={title} isModal={isModal} />
+      <ModalHeading isModal={isModal} />
       <Form fields={formFields} item={role} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} />
     </div>
   );

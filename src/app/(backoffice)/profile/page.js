@@ -1,6 +1,5 @@
 "use client";
 
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
@@ -8,7 +7,9 @@ import { useTitle } from "@/context/TitleContext";
 import { getFrenchSlug } from "@/lib/slugUtils";
 import { getProfile, updateProfile } from "@/services/users";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
-import { faAt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightLong, faAt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Profile() {
@@ -77,14 +78,12 @@ export default function Profile() {
       <ClientMeta title={title} />
       <Form fields={formFields} item={user} validate={validate} onSubmit={handleSubmit} setMode="edit">
         <div className="flex">
-          <DefaultButton
-            type="button"
-            title="Modifier mot de passe"
-            onClick={() => {
-              window.location.href = `/${getFrenchSlug("profile/")}/${getFrenchSlug("edit-password/")}`;
-            }}
-            btnStyle="warning"
-          />
+          <div className="flex">
+            <Link href={getFrenchSlug(`/profile/edit-password`)} className="text-blue-600 hover:underline">
+              Modifier mot de passe
+              <FontAwesomeIcon icon={faArrowRightLong} className="ml-2 -mb-0.5" />
+            </Link>
+          </div>
         </div>
       </Form>
     </div>

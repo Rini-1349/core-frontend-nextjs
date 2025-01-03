@@ -84,7 +84,6 @@ export default function Permissions() {
 
   const handleToggleColumn = (columnNumber, isChecked) => {
     const rows = document.querySelectorAll("table tbody tr"); // Sélectionne toutes les lignes du tableau dans le tbody
-    console.log(isChecked);
     rows.forEach((row) => {
       const checkbox = row.querySelector(`td:nth-child(${columnNumber}) input[type="checkbox"]`); // Cible la cellule correspondante et trouve l'input
       if (checkbox) {

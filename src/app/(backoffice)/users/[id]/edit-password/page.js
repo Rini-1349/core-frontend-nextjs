@@ -51,7 +51,7 @@ export default function UserDetails() {
   const { title, setTitle } = useTitle();
   // Définir le titre de la page en fonction du mode
   useEffect(() => {
-    setTitle(`Modification mot de passe - ${user?.lastname || ""} ${user?.firstname || ""}`);
+    setTitle(`Mot de passe - ${user?.lastname || ""} ${user?.firstname || ""}`);
   }, [user]);
 
   // Récupération des données utilisateur
@@ -115,7 +115,7 @@ export default function UserDetails() {
   return (
     <div>
       <ClientMeta title={title} />
-      <ModalHeading title={title} isModal={isModal} />
+      <ModalHeading isModal={isModal} />
       <Form fields={formFields} item={user} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} setMode="edit" />
     </div>
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
 import ModalHeading from "@/components/Heading/ModalHeading";
 import ClientMeta from "@/components/Metadata/ClientMeta";
@@ -13,7 +12,9 @@ import { isAuthorizedRoute } from "@/utils/routesHelper";
 import { hasSessionExpired } from "@/utils/session";
 import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 import { faUser as faUserRegular } from "@fortawesome/free-regular-svg-icons";
-import { faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightLong, faAt, faKey, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -81,12 +82,14 @@ export default function UserDetails() {
 
   // Définir le titre de la page en fonction du mode
   useEffect(() => {
-    if (mode === "view") {
-      setTitle(`Détails utilisateur  - ${user?.lastname || ""} ${user?.firstname || ""}`);
-    } else if (mode === "edit") {
-      setTitle(`Modifier utilisateur - ${user?.lastname || ""} ${user?.firstname || ""}`);
-    } else if (mode === "add") {
-      setTitle("Ajouter utilisateur");
+    if (user) {
+      if (mode === "view") {
+        setTitle(`Utilisateur  - ${user?.lastname || ""} ${user?.firstname || ""}`);
+      } else if (mode === "edit") {
+        setTitle(`Modifier utilisateur - ${user?.lastname || ""} ${user?.firstname || ""}`);
+      } else if (mode === "add") {
+        setTitle("Ajouter utilisateur");
+      }
     }
   }, [mode, user]);
 
@@ -116,7 +119,6 @@ export default function UserDetails() {
         setIsLoading(true);
         try {
           const response = await getRolesList();
-          console.log(response);
           if (response) {
             setRolesList(response.data);
           }
@@ -172,18 +174,14 @@ export default function UserDetails() {
   return (
     <div>
       <ClientMeta title={title} />
-      <ModalHeading title={title} isModal={isModal} />
+      <ModalHeading isModal={isModal} />
       <Form fields={formFields} initialValues={mode === "add" ? { password: "", confirmPassword: "" } : {}} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} validateOnChange={validateOnChange}>
         {mode === "edit" && isAuthorizedRoute({ pathname: `/users/${user.id}/edit-password` }, session) && (
           <div className="flex">
-            <DefaultButton
-              type="button"
-              title="Modifier mot de passe"
-              onClick={() => {
-                window.location.href = getFrenchSlug(`/users/${user.id}/edit-password${isModal ? "?modal=true" : ""}`);
-              }}
-              btnStyle="warning"
-            />
+            <Link href={getFrenchSlug(`/users/${user.id}/edit-password${isModal ? "?modal=true" : ""}`)} className="text-blue-600 hover:underline">
+              Modifier mot de passe
+              <FontAwesomeIcon icon={faArrowRightLong} className="ml-2 -mb-0.5" />
+            </Link>
           </div>
         )}
       </Form>

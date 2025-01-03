@@ -1,20 +1,18 @@
 "use client";
 
-import { DefaultButton } from "@/components/Button/DefaultButton";
 import Form from "@/components/Form";
 import ClientMeta from "@/components/Metadata/ClientMeta";
 import { useIsLoading } from "@/context/LoadingContext";
 import { useTitle } from "@/context/TitleContext";
-import { getFrenchSlug } from "@/lib/slugUtils";
 import { editProfilePassword } from "@/services/users";
 import { validateConfirmPassword, validatePassword } from "@/utils/validationHelpers";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
 export default function EditProfilePassword() {
-  const { isLoading, setIsLoading } = useIsLoading();
+  const { setIsLoading } = useIsLoading();
 
-  const [formFields, setFormFields] = useState([
+  const [formFields] = useState([
     { name: "currentPassword", label: "Ancien mot de passe", type: "password", breakAfter: true, icon: faKey },
     { name: "password", label: "Nouveau mot de passe", type: "password", icon: faKey },
     { name: "confirmPassword", label: "Confirmation nouveau mot de passe", type: "password", icon: faKey },
@@ -66,18 +64,6 @@ export default function EditProfilePassword() {
   return (
     <div>
       <ClientMeta title={title} />
-      <div className="flex">
-        <DefaultButton
-          type="button"
-          title="Retour à mon profil"
-          onClick={() => {
-            window.location.href = `/${getFrenchSlug("profile")}`;
-          }}
-          btnStyle="primary"
-          widthClass=""
-          className="mb-5"
-        />
-      </div>
       <Form fields={formFields} item={{}} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} setMode="edit" />
     </div>
   );
