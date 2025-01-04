@@ -120,10 +120,10 @@ export default function RoleDetails() {
   };
 
   return (
-    <div>
+    <>
       <ClientMeta title={title} />
       <ModalHeading isModal={isModal} />
-      <Form fields={formFields} item={role} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} />
-    </div>
+      <Form fields={formFields} item={role} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} isModal={isModal} />
+    </>
   );
 }

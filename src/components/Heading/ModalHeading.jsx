@@ -17,17 +17,22 @@ export default function ModalHeading({ isModal }) {
   return (
     <>
       {isModal && (
-        <>
-          {parentPage && (
-            <Link href={getFrenchSlug(parentPage.href)} className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
-              <FontAwesomeIcon icon={faArrowLeft} />
-              <span>{parentPage.title}</span>
-            </Link>
-          )}
-          <div className="flex justify-center items-center pb-3 mb-3 border-b border-gray-300">
-            <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-          </div>
-        </>
+        <div className={`flex py-3 border-b border-gray-300`}>
+          <>
+            {parentPage ? (
+              <Link href={getFrenchSlug(parentPage.href)} className="w-1/5 ml-4 text-gray-600 hover:text-gray-800 flex items-center gap-1">
+                <FontAwesomeIcon icon={faArrowLeft} />
+                <span className="hidden sm:block">{parentPage.title}</span>
+              </Link>
+            ) : (
+              <div className="w-1/5"></div>
+            )}
+
+            <div className="w-3/5 flex justify-center items-center">
+              <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+            </div>
+          </>
+        </div>
       )}
     </>
   );

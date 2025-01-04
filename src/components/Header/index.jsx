@@ -50,7 +50,7 @@ const Header = (props) => {
           </Link>
         </div>
         {parentPage && (
-          <Link href={getFrenchSlug(parentPage.href)} className="text-gray-600 hover:text-gray-800 flex items-center gap-1">
+          <Link href={getFrenchSlug(parentPage.href)} className="text-gray-600 hover:text-gray-800 flex items-center gap-1 hidden lg:flex">
             <FontAwesomeIcon icon={faArrowLeft} />
             <span>{parentPage.title}</span>
           </Link>

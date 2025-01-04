@@ -172,10 +172,10 @@ export default function UserDetails() {
   };
 
   return (
-    <div>
+    <>
       <ClientMeta title={title} />
       <ModalHeading isModal={isModal} />
-      <Form fields={formFields} initialValues={mode === "add" ? { password: "", confirmPassword: "" } : {}} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} validateOnChange={validateOnChange}>
+      <Form fields={formFields} initialValues={mode === "add" ? { password: "", confirmPassword: "" } : {}} item={user} validate={validate} onSubmit={handleSubmit} isReadOnly={isReadOnly} setMode={setMode} validateOnChange={validateOnChange} isModal={isModal}>
         {mode === "edit" && isAuthorizedRoute({ pathname: `/users/${user.id}/edit-password` }, session) && (
           <div className="flex">
             <Link href={getFrenchSlug(`/users/${user.id}/edit-password${isModal ? "?modal=true" : ""}`)} className="text-blue-600 hover:underline">
@@ -185,6 +185,6 @@ export default function UserDetails() {
           </div>
         )}
       </Form>
-    </div>
+    </>
   );
 }

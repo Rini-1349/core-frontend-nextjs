@@ -37,7 +37,7 @@ function generateInput(field, item, isReadOnly = false, fieldErrors, handleChang
   }
 }
 
-export default function Form({ children, fields, onSubmit, isReadOnly, item, validate, validateOnChange, initialValues = {}, onSubmitResponseDisplayType = "alert", submitButton, formStyle }) {
+export default function Form({ children, fields, onSubmit, isReadOnly, item, validate, validateOnChange, initialValues = {}, onSubmitResponseDisplayType = "alert", submitButton, formStyle, isModal = false }) {
   const { fieldErrors, globalMessage, setGlobalMessage, handleChange, validateForm } = useForm(initialValues, validate, validateOnChange);
   const { showAlert } = useAlert();
   const router = useRouter();
@@ -95,7 +95,7 @@ export default function Form({ children, fields, onSubmit, isReadOnly, item, val
 
   return (
     <>
-      <form className={formStyle?.formClassName || ""} onSubmit={handleSubmit}>
+      <form className={`${formStyle?.formClassName || ""}${isModal ? " p-4" : ""}`} onSubmit={handleSubmit}>
         <div className={formStyle?.formDivClassName || "flex flex-wrap -mx-2"}>
           {fields.map((field) => {
             const widthClass = defineWidthClass(field);

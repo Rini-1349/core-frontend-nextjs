@@ -20,10 +20,10 @@ const columns = [
         href: "/roles/[id]?mode=view",
         openingType: "popup",
         popupModalStyle: {
-          top: "15%",
-          height: "65%",
+          top: "30%",
+          height: "32%",
         },
-        childDivMaxWidthClass: "max-w-3xl",
+        childDivMaxWidthClass: "max-w-xl",
         bgColor: "cyan",
         icon: faEye,
         replacePatterns: [
@@ -39,10 +39,10 @@ const columns = [
         href: "/roles/[id]?mode=edit",
         openingType: "popup",
         popupModalStyle: {
-          top: "15%",
-          height: "65%",
+          top: "25%",
+          height: "40%",
         },
-        childDivMaxWidthClass: "max-w-3xl",
+        childDivMaxWidthClass: "max-w-xl",
         bgColor: "indigo",
         icon: faPenToSquare,
         replacePatterns: [
@@ -83,10 +83,10 @@ const addAction = {
   href: "/roles/new",
   openingType: "popup",
   popupModalStyle: {
-    top: "15%",
-    height: "65%",
+    top: "20%",
+    height: "48%",
   },
-  childDivMaxWidthClass: "max-w-3xl",
+  childDivMaxWidthClass: "max-w-xl",
 };
 
 export default function RolesList() {

@@ -113,10 +113,10 @@ export default function UserDetails() {
   };
 
   return (
-    <div>
+    <>
       <ClientMeta title={title} />
       <ModalHeading isModal={isModal} />
-      <Form fields={formFields} item={user} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} setMode="edit" />
-    </div>
+      <Form fields={formFields} item={user} validate={validate} validateOnChange={validateOnChange} onSubmit={handleSubmit} setMode="edit" isModal={isModal} />
+    </>
   );
 }

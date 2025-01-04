@@ -29,8 +29,8 @@ const addAction = {
   href: "/users/new",
   openingType: "popup",
   popupModalStyle: {
-    top: "15%",
-    height: "65%",
+    top: "10%",
+    height: "73%",
   },
   childDivMaxWidthClass: "max-w-3xl",
 };
@@ -86,8 +86,8 @@ export default function UsersList() {
           href: "/users/[id]?mode=edit",
           openingType: "popup",
           popupModalStyle: {
-            top: "15%",
-            height: "65%",
+            top: "10%",
+            height: "68%",
           },
           childDivMaxWidthClass: "max-w-3xl",
           bgColor: "indigo",

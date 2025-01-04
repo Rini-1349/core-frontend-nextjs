@@ -30,12 +30,14 @@ export default function AdminLayout({ children }) {
         {!isModal && <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
         <div className="main-content">
           {!isModal && <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />}
-          <div className="content-wrapper">
+          <div className={`content-wrapper${isModal ? " p-0" : ""}`}>
             <AlertProvider>
-              <PageAlert />
+              <PageAlert isModal={isModal} />
               <PopupProvider>
                 <LoadingProvider>
-                  <LayoutContent fullPage={false}>{children}</LayoutContent>
+                  <LayoutContent fullPage={false} isModal={isModal}>
+                    {children}
+                  </LayoutContent>
                 </LoadingProvider>
               </PopupProvider>
             </AlertProvider>
